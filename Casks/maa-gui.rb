@@ -4,10 +4,10 @@ cask "maa-gui" do
 
   url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/releases/download/v#{version}/MAA-v#{version}-macos-universal.dmg"
   name "MAA.app"
-  desc "Mac GUI for MAA (MaaAssistantArknights)"
+  desc "GUI for MAA (MaaAssistantArknights)"
   homepage "https://maa.plus/"
 
-  app "MAA.app"
-
   conflicts_with cask: "MaaAssistantArknights/tap/maa-gui-beta"
+
+  app "MAA.app"
 end

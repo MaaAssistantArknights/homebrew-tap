@@ -3,7 +3,7 @@ cask "maa-gui" do
   sha256 "214d4cab70f6a9eb10543fb0b59169bb3f8f7c2f6b9efd27154f3de2bbc834d0"
 
   url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/releases/download/v#{version}/MAA-v#{version}-macos-universal.dmg",
-    verified: "github.com/MaaAssistantArknights/MaaAssistantArknights/"
+      verified: "github.com/MaaAssistantArknights/MaaAssistantArknights/"
   name "MAA.app"
   desc "GUI for MAA (MaaAssistantArknights)"
   homepage "https://maa.plus/"

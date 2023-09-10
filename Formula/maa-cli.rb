@@ -8,7 +8,7 @@ class MaaCli < Formula
   depends_on "rust" => :build
 
   def install
-    system "cargo", "install", "--path", "maa-cli", "--lcoked", "--root", prefix, "--bin", "maa"
+    system "cargo", "install", "--path", "maa-cli", "--locked", "--root", prefix, "--bin", "maa"
     fish_completion.install "maa-cli/share/fish/vendor_completions.d/maa.fish"
   end
 

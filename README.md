@@ -1,10 +1,10 @@
-# Wangl-cc Tap
+# MaaAssistantArknights Tap
 
 ## How do I install these formulae?
 
-`brew install wangl-cc/tap/<formula>`
+`brew install MaaAssistantArknights/tap/<formula>`
 
-Or `brew tap wangl-cc/tap` and then `brew install <formula>`.
+Or `brew tap MaaAssistantArknights/tap` and then `brew install <formula>`.
 
 ## Documentation
 

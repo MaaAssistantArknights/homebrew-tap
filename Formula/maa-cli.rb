@@ -1,8 +1,8 @@
 class MaaCli < Formula
   desc "Command-line tool for MAA (MaaAssistantArknights)"
   homepage "https://github.com/MaaAssistantArknights/maa-cli/"
-  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.3.8.tar.gz"
-  sha256 "d107e426a599cd489c273aabf0dae50f3dbfdb050275b11fb05627d2e4998a5b"
+  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.3.9.tar.gz"
+  sha256 "f82c64966b2393b5876406b19d3be87e738f39788fdb47b74b8d58ff5b7db975"
   license "AGPL-3.0-or-later"
 
   bottle do
@@ -15,7 +15,8 @@ class MaaCli < Formula
   depends_on "rust" => :build
 
   def install
-    system "cargo", "install", "--path", "maa-cli", "--locked", "--root", prefix, "--bin", "maa"
+    system "cargo", "install", "--path", "maa-cli", "--locked", "--root", prefix,
+           "--no-default-features", "--bin", "maa"
     fish_completion.install "maa-cli/share/fish/vendor_completions.d/maa.fish"
   end
 

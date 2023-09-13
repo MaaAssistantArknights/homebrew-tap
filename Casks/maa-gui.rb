@@ -8,6 +8,11 @@ cask "maa-gui" do
   desc "GUI for MAA (MaaAssistantArknights)"
   homepage "https://maa.plus/"
 
+  livecheck do
+    url :url
+    regex(/^v?(\d+\.\d+\.\d+)$/i)
+  end
+
   conflicts_with cask: "MaaAssistantArknights/tap/maa-gui-beta"
   depends_on macos: ">= :big_sur"
 

@@ -13,6 +13,7 @@ cask "maa-gui" do
     regex(/^v?(\d+\.\d+\.\d+)$/i)
   end
 
+  auto_updates true
   conflicts_with cask: "MaaAssistantArknights/tap/maa-gui-beta"
   depends_on macos: ">= :big_sur"
 

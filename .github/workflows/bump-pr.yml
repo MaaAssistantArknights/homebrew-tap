@@ -10,10 +10,10 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Update Homebrew cask
-        uses: eugenesvk/action-homebrew-bump-cask@3.8.4
+        uses: wangl-cc/action-homebrew-bump-cask@master
         with:
           token: ${{secrets.MAA_HOMEBREW_BUMP_PR}}
           tap: MaaAssistantArknights/homebrew-tap
-          org: wangl-cc
+          no_fork: false
           force: false
           livecheck: true

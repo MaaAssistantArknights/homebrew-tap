@@ -1,0 +1,19 @@
+name: Bump formulae and casks and open PRs
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  casks:
+    runs-on: macos-latest
+    steps:
+      - name: Update Homebrew cask
+        uses: eugenesvk/action-homebrew-bump-cask@3
+        with:
+          token: ${{secrets.MAA_HOMEBREW_BUMP_PR}}
+          tap: MaaAssistantArknights/homebrew-tap
+          org: MaaAssistantArknights
+          force: false
+          livecheck: true

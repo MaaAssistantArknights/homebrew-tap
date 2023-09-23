@@ -14,6 +14,6 @@ jobs:
         with:
           token: ${{secrets.MAA_HOMEBREW_BUMP_PR}}
           tap: MaaAssistantArknights/homebrew-tap
-          org: MaaAssistantArknights
+          org: wangl-cc
           force: false
           livecheck: true

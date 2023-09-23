@@ -10,7 +10,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Update Homebrew cask
-        uses: eugenesvk/action-homebrew-bump-cask@3
+        uses: eugenesvk/action-homebrew-bump-cask@3.8.4
         with:
           token: ${{secrets.MAA_HOMEBREW_BUMP_PR}}
           tap: MaaAssistantArknights/homebrew-tap

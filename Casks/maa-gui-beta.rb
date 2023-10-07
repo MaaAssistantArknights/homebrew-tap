@@ -10,7 +10,7 @@ cask "maa-gui-beta" do
 
   livecheck do
     url :url
-    regex(/^v?(\d+\.\d+\.\d+(?:-beta\.\d+)?)$/i)
+    regex(/^v?(\d+\.\d+\.\d+(?:-(?:beta|rc)\.\d+)?)$/i)
   end
 
   auto_updates true

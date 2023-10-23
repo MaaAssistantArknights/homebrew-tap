@@ -6,9 +6,9 @@ class MaaCli < Formula
   license "AGPL-3.0-or-later"
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-cli-0.3.11"
-    sha256 cellar: :any_skip_relocation, ventura:      "763fb408cbb8e86d901363f65378df59ed90bf0153bb3e374e257b5819de8a72"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "2511923437e5cee3ce0811e08950b21313de9aa0170d3c6dff472a4f46bd0324"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-cli-0.3.12"
+    sha256 cellar: :any_skip_relocation, ventura:      "433247106607a1ee1381f4253794af61fed6ed7026805ade6e283ee89b8f1efe"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "3ad777bb1191adfe5f83663f1bbbd02e210bdc018981e8f01e381253494d6401"
   end
 
   depends_on "rust" => :build

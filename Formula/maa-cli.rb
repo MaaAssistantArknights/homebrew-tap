@@ -1,8 +1,8 @@
 class MaaCli < Formula
   desc "Command-line tool for MAA (MaaAssistantArknights)"
   homepage "https://github.com/MaaAssistantArknights/maa-cli/"
-  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.3.11.tar.gz"
-  sha256 "da9c3ba72b93519f7382d3c518da76ce9e9f1e05806e8f6d0f580363226631ed"
+  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.3.12.tar.gz"
+  sha256 "f6742323dcf201bb0c05e542cc6dc674ba08c8dba292d7b39c956490b1b3bbc2"
   license "AGPL-3.0-or-later"
 
   bottle do

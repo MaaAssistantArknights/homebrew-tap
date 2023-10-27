@@ -14,8 +14,10 @@ class MaaCli < Formula
   depends_on "rust" => :build
 
   def install
-    system "cargo", "install", "--path", "maa-cli", "--locked", "--root", prefix,
-           "--no-default-features", "--bin", "maa"
+    ENV["CARGO_PROFILE_RELEASE_CODEGEN_UNITS"] = "1"
+    ENV["CARGO_PROFILE_RELEASE_LTO"] = "true"
+    ENV["CARGO_PROFILE_RELEASE_STRIP"] = "true"
+    system "cargo", "install", "--no-default-features", *std_cargo_args(path: "maa-cli")
     fish_completion.install "maa-cli/share/fish/vendor_completions.d/maa.fish"
   end
 

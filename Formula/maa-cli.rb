@@ -7,8 +7,9 @@ class MaaCli < Formula
 
   bottle do
     root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-cli-0.3.12"
-    sha256 cellar: :any_skip_relocation, ventura:      "433247106607a1ee1381f4253794af61fed6ed7026805ade6e283ee89b8f1efe"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "3ad777bb1191adfe5f83663f1bbbd02e210bdc018981e8f01e381253494d6401"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, ventura:      "ba1cad00a5386ae02796d34b1c139e34ea68f7878185022c39b8d5c95b62d5a7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "c062a0a3dbc7d738fbea1eb22719c3b6be55a528fcadccb0b6606f15521e422b"
   end
 
   depends_on "rust" => :build

@@ -1,19 +1,78 @@
-name: Bump formulae and casks and open PRs
+name: Bump formulae and casks
 
 on:
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:
+  pull_request:
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
-  casks:
+  update:
+    name: Update Homebrew formulae and casks
     runs-on: macos-latest
     steps:
-      - name: Update Homebrew cask
-        uses: wangl-cc/action-homebrew-bump-cask@master
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
         with:
-          token: ${{secrets.MAA_HOMEBREW_BUMP_PR}}
-          tap: MaaAssistantArknights/homebrew-tap
-          no_fork: false
-          force: false
-          livecheck: true
+          core: true
+          test-bot: false
+          token: ${{ secrets.MAA_HOMEBREW_BUMP_PR }}
+
+      - name: Cache Homebrew Bundler RubyGems
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.set-up-homebrew.outputs.gems-path }}
+          key: ${{ runner.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
+          restore-keys: ${{ runner.os }}-rubygems-
+
+      - name: Install Homebrew Bundler RubyGems
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: brew install-bundler-gems
+
+      - name: Bump formulae
+        run: |
+          formulae="$(brew livecheck \
+            --quiet --formula --json \
+            --tap=MaaAssistantArknights/tap)"
+          len=$(echo "$formulae" | jq length)
+          for ((i=0; i < $len; i++)); do
+            formula=$(echo "$formulae" | jq -r ".[$i].formula")
+            version=$(echo "$formulae" | jq -r ".[$i].version.latest")
+            outdated=$(echo "$formulae" | jq -r ".[$i].version.outdated")
+            if [ "$outdated" = "true" ]; then
+              echo "Bumping \`$formula\` to \`$version\`"
+              brew bump-formula-pr maaassistantarknights/tap/$formula \
+              --no-browse \
+              --version=$version \
+              --message="Bump \`$formula\` to \`$version\`"
+            else
+              echo "\`$formula\` is up to date"
+            fi
+          done
+
+      - name: Bump casks
+        run: |
+          casks="$(brew livecheck \
+            --quiet --cask --json \
+            --tap=maaassistantarknights/tap)"
+          len=$(echo "$casks" | jq length)
+          for ((i=0; i < $len; i++)); do
+            cask=$(echo "$casks" | jq -r ".[$i].cask")
+            version=$(echo "$casks" | jq -r ".[$i].version.latest")
+            outdated=$(echo "$casks" | jq -r ".[$i].version.outdated")
+            if [ "$outdated" = "true" ]; then
+              echo "Bumping \`$cask\` to \`$version\`"
+              brew bump-cask-pr maaassistantarknights/tap/$cask \
+              --no-browse \
+              --version=$version \
+              --message="Bump \`$cask\` to \`$version\`"
+            else
+              echo "\`$cask\` is up to date"
+            fi
+          done

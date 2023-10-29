@@ -1,15 +1,21 @@
-name: brew test-bot
+name: Brew test-bot
 on:
   push:
     branches:
       - main
   pull_request:
+
 jobs:
   test-bot:
-    strategy:
-      matrix:
-        os: [ubuntu-22.04, macos-13]
     runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-22.04
+          - macos-12
+          - macos-13
+          # - macos-14 # runner not available yet
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew

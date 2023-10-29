@@ -3,7 +3,7 @@ class MaaCore < Formula
   homepage "https://github.com/MaaAssistantArknights/MaaAssistantArknights/"
   url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v4.25.0.tar.gz"
   sha256 "41a6a8608a764bc4faf8a5ee020189f4f961f4532e959cd9019abb0ac595788c"
-  license "AGPL-3.0"
+  license "AGPL-3.0-only"
 
   livecheck do
     url :url

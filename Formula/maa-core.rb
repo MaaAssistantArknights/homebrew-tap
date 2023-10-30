@@ -1,5 +1,5 @@
 class MaaCore < Formula
-  desc "Arknights assistant"
+  desc "Maa Arknights assistant Library"
   homepage "https://github.com/MaaAssistantArknights/MaaAssistantArknights/"
   url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v4.25.0.tar.gz"
   sha256 "41a6a8608a764bc4faf8a5ee020189f4f961f4532e959cd9019abb0ac595788c"
@@ -22,7 +22,7 @@ class MaaCore < Formula
   depends_on "opencv"
   depends_on "zlib"
 
-  conflicts_with "maa-core-beta", { because: "both provide LibMaaCore" }
+  conflicts_with "maa-core-beta", { because: "both provide libMaaCore" }
 
   def install
     # patch CMakeLists.txt
@@ -37,13 +37,14 @@ class MaaCore < Formula
     end
 
     # patch ONNXRuntime
+    # The ONNXRuntime header files are installed to $HOMEBREW_PREFIX/include/onnxruntime
     onnxruntime_related_files = %w[
       cmake/FindONNXRuntime.cmake
       src/MaaCore/Config/OnnxSessions.h
       src/MaaCore/Vision/Battle/BattlefieldDetector.cpp
       src/MaaCore/Vision/Battle/BattlefieldClassifier.cpp
     ]
-    inreplace onnxruntime_related_files, "/core/session", ""
+    inreplace onnxruntime_related_files, "onnxruntime/core/session", "onnxruntime"
 
     cmake_args = %W[
       -DUSE_MAADEPS=OFF

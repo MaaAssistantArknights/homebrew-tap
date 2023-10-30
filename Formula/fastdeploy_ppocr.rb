@@ -10,6 +10,13 @@ class FastdeployPpocr < Formula
     skip "This formula is not tagged, so there is no version to check"
   end
 
+  bottle do
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/fastdeploy_ppocr-2023.10.29"
+    sha256 cellar: :any,                 ventura:      "0af37c7f61296935597dc35611887817d828ab0afb8f36b4ca4a1e691c289bb2"
+    sha256 cellar: :any,                 monterey:     "8f34109b45d4fd587647c50a845059af5dd8a3c6114c17a9a8b9c19ba3ae9d1c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "80b5b2bd90fea583483b52f4bd5e7c37f0c6fec85861568925afdf63ec53de19"
+  end
+
   depends_on "cmake" => :build
   depends_on "eigen" => :build
 

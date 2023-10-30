@@ -25,6 +25,7 @@ class MaaCoreBeta < Formula
 
   depends_on "cpr"
   depends_on "fastdeploy_ppocr"
+  depends_on macos: :ventura # upstream only compiles on macOS 13
   depends_on "onnxruntime"
   depends_on "opencv"
   depends_on "zlib"
@@ -34,11 +35,6 @@ class MaaCoreBeta < Formula
   conflicts_with "maa-core", { because: "both provide libMaaCore" }
 
   fails_with gcc: "11"
-
-  fails_with :clang do
-    build 1400
-    cause "std::ranges::views is not implemented"
-  end
 
   def install
     # patch CMakeLists.txt

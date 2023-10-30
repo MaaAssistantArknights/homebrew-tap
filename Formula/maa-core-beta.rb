@@ -14,6 +14,7 @@ class MaaCoreBeta < Formula
 
   depends_on "asio" => :build
   depends_on "cmake" => :build
+  depends_on "gcc" => :build if OS.linux?
   depends_on "range-v3" => :build
 
   depends_on "cpr"
@@ -22,7 +23,11 @@ class MaaCoreBeta < Formula
   depends_on "opencv"
   depends_on "zlib"
 
+  uses_from_macos "curl"
+
   conflicts_with "maa-core", { because: "both provide libMaaCore" }
+
+  fails_with gcc: "11"
 
   def install
     # patch CMakeLists.txt

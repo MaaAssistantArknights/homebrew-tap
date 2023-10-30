@@ -10,6 +10,13 @@ class MaaCoreBeta < Formula
     regex(/^v?(\d+\.\d+\.\d+(?:-(?:beta|rc)\.\d+)?)$/i)
   end
 
+  bottle do
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-beta-4.26.0-beta.2"
+    sha256 cellar: :any,                 ventura:      "4909880dee10d807ed1c10d9c10fa1d6131affd367690a4a45a0004a3abf44ae"
+    sha256 cellar: :any,                 monterey:     "b2acbfdaba1e07579ec8d9e13c1cabaf38b0a9dfacee53553a3c1da1581ee1c4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "f7680b58cf280eac3b2b4133ab337e40c418fd350039c2b33655f1801ec86d98"
+  end
+
   option "with-resource", "Install resource files"
 
   depends_on "asio" => :build

@@ -62,7 +62,7 @@ jobs:
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.MAA_HOMEBREW_BUMP_PR }}
         run: |
-          casks="$(brew livecheck --quiet --cask --json--tap=maaassistantarknights/tap)"
+          casks="$(brew livecheck --quiet --cask --json --tap=maaassistantarknights/tap)"
           len=$(echo "$casks" | jq length)
           for ((i=0; i < $len; i++)); do
             cask=$(echo "$casks" | jq -r ".[$i].cask")

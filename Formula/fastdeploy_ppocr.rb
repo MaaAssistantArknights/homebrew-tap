@@ -17,10 +17,9 @@ class FastdeployPpocr < Formula
   depends_on "opencv"
 
   def install
-    ENV.append "CXXFLAGS", "-fPIC"
-
     cmake_args = %w[
       -DBUILD_SHARED_LIBS=ON
+      -DCMAKE_POSITION_INDEPENDENT_CODE=ON
     ]
     system "cmake", "-S", ".", "-B", "build", *cmake_args, *std_cmake_args
     system "cmake", "--build", "build"

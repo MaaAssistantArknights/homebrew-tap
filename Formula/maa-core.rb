@@ -21,7 +21,6 @@ class MaaCore < Formula
 
   depends_on "asio" => :build
   depends_on "cmake" => :build
-  depends_on "gcc" => :build if OS.linux?
   depends_on "range-v3" => :build
 
   depends_on "cpr"
@@ -35,6 +34,11 @@ class MaaCore < Formula
   conflicts_with "maa-core-beta", { because: "both provide libMaaCore" }
 
   fails_with gcc: "11"
+
+  fails_with :clang do
+    build 1400
+    cause "std::ranges::views is not implemented"
+  end
 
   def install
     # patch CMakeLists.txt

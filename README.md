@@ -22,13 +22,15 @@ brew install <formula>
 ### Formulae
 
 - `maa-cli`: MAA 命令行工具 (MAA CLI tool)。
+- `maa-core`: MAA 核心库 `libMaaCore.(so|dylib)` (MAA Core)。
+- `maa-core-beta`: MAA 核心库的测试版本（Beta version for MAA Core)。
 
-**注意**：由于 GitHub 没有提供 `arm64` 架构的 runner，因此不提供 `maa-cli` 预编译 bottle。
-如果你在 `arm64` 架构的 macOS 或者 Linux 上使用 `brew`安装 `maa-cli`，`brew` 会自动从源码编译。
+**注意**：由于 GitHub 没有提供 `arm` 架构的免费 runner，因此不提供相应的预编译 bottle。
+如果你在 `arm64` 架构的 macOS 或者 Linux 上使用 `brew`，`brew` 会自动从源码编译。
 macOS 用户也可以使用 `maa-cli-bin` 这个 cask 来安装 `maa-cli` 的通用二进制版本。
 
-**Note**: Since GitHub does not provide `arm64` architecture runner, `maa-cli` does not provide pre-compiled bottle.
-If you use `brew` to install `maa-cli` on `arm64` architecture macOS or Linux, `brew` will automatically compile from source.
+**Note**: Since there are no free runner on `arm` architecture for Github Action, the probuilt bottle for `arm` is no available.
+If you use `brew` to install formulae on `arm64` architecture macOS or Linux, `brew` will automatically compile from source.
 For macOS users,  `maa-cli-bin` cask can also be used to install the universal binary version of `maa-cli`.
 
 ### Casks (only for macOS)

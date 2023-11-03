@@ -50,6 +50,7 @@ jobs:
             if [ "$outdated" = "true" ]; then
               echo "Bumping \`$formula\` to \`$version\`"
               brew bump-formula-pr maaassistantarknights/tap/$formula \
+              --no-audit \
               --no-browse \
               --version=$version \
               --message="Bump \`$formula\` to \`$version\`"
@@ -71,6 +72,7 @@ jobs:
             if [ "$outdated" = "true" ]; then
               echo "Bumping \`$cask\` to \`$version\`"
               brew bump-cask-pr maaassistantarknights/tap/$cask \
+              --no-audit \
               --no-browse \
               --version=$version \
               --message="Bump \`$cask\` to \`$version\`"

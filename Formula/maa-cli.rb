@@ -14,6 +14,8 @@ class MaaCli < Formula
 
   depends_on "rust" => :build
 
+  conflicts_with "maa-cli-beta", { because: "both provide maa" }
+
   def install
     ENV["CARGO_PROFILE_RELEASE_CODEGEN_UNITS"] = "1"
     ENV["CARGO_PROFILE_RELEASE_LTO"] = "true"

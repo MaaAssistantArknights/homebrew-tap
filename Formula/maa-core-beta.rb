@@ -27,7 +27,6 @@ class MaaCoreBeta < Formula
   depends_on macos: :ventura # upstream only compiles on macOS 13
   depends_on "onnxruntime"
   depends_on "opencv"
-  depends_on "zlib"
 
   uses_from_macos "curl"
 

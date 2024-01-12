@@ -13,7 +13,15 @@ class MaaCli < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux: "91f133c630dfe4cf598d61596947eb155db9f4553e51cfc068bab46b5df66a05"
   end
 
+  option "without-git2", "Don't build with libgit2 resource updater backend"
+  option "without-core-installer", "Don't build with core installer"
+
   depends_on "rust" => :build
+
+  # openssl is always required on Linux
+  # while it's only required on macOS when building with git2
+  depends_on "openssl" if OS.linux? || build.with?("git2")
+  uses_from_macos "zlib"
 
   conflicts_with "maa-cli-beta", { because: "both provide maa" }
 
@@ -21,8 +29,14 @@ class MaaCli < Formula
     ENV["CARGO_PROFILE_RELEASE_CODEGEN_UNITS"] = "1"
     ENV["CARGO_PROFILE_RELEASE_LTO"] = "true"
     ENV["CARGO_PROFILE_RELEASE_STRIP"] = "true"
-    system "cargo", "install", "--no-default-features", *std_cargo_args(path: "maa-cli")
-    fish_completion.install "maa-cli/share/fish/vendor_completions.d/maa.fish"
+
+    features = []
+    features += ["git2"] if build.with? "git2"
+    features += ["core_installer"] if build.with? "core-installer"
+
+    system "cargo", "install", "--no-default-features",
+      "--features", features.join(","), *std_cargo_args(path: "maa-cli")
+    fish_completion.install "maa-cli/completions/maa.fish"
   end
 
   test do

@@ -16,7 +16,7 @@ class MaaCoreBeta < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux: "7fb86c4840cb3b8bdf28ee4d3ad5ca210101e2cc78479741826ceac271799ee4"
   end
 
-  option "with-resource", "Install resource files"
+  option "without-resource", "Don't install resource files"
 
   depends_on "asio" => :build
   depends_on "cmake" => :build

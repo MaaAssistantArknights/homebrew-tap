@@ -11,9 +11,9 @@ class MaaCoreBeta < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-beta-5.0.0-beta.1"
-    sha256 cellar: :any,                 ventura:      "49ed3afcd489df205d525d5101000ee136731dbc2467e6a1314165869fe1bfa8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "7fb86c4840cb3b8bdf28ee4d3ad5ca210101e2cc78479741826ceac271799ee4"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-beta-5.0.0-beta.2"
+    sha256 cellar: :any,                 ventura:      "86e9fe483e1f7303b527b34372ac662f8fdd68160eb8a22bee90eac6ba866b11"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "f4b445e62b42bcd6b0e6e1565515d559481b77d27cd19c43a028add6602cff60"
   end
 
   option "with-resource", "Install resource files"

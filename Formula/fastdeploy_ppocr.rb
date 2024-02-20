@@ -17,6 +17,8 @@ class FastdeployPpocr < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux: "80b5b2bd90fea583483b52f4bd5e7c37f0c6fec85861568925afdf63ec53de19"
   end
 
+  deprecate! date: "2024-02-20", because: "this formula is now shiped as a resource by MaaCore"
+
   depends_on "cmake" => :build
   depends_on "eigen" => :build
 

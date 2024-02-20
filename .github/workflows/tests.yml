@@ -15,7 +15,7 @@ jobs:
           - ubuntu-22.04
           - macos-12
           - macos-13
-          # - macos-14 # runner not available yet
+          - macos-14 # aarch64
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
@@ -47,5 +47,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: bottles
-          path: '*.bottle.*'
-          if-no-files-found: 'ignore'
+          path: "*.bottle.*"
+          if-no-files-found: ignore

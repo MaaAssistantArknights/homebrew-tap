@@ -29,12 +29,14 @@ class MaaCoreBeta < Formula
   depends_on "cpr"
   depends_on macos: :ventura # upstream only compiles on macOS 13
   depends_on "onnxruntime"
-  depends_on "opencv"
+
+  # opencv is a very large dependency, and we only need a small part of it
+  # so we build our own opencv if user does not want to install opencv by homebrew
+  depends_on "opencv" => :optional
 
   uses_from_macos "curl"
 
   conflicts_with "maa-core", { because: "both provide libMaaCore" }
-  conflicts_with "fastdeploy_ppocr", { because: "both provide libfastdeploy_ppocr" }
 
   fails_with gcc: "11"
 
@@ -43,7 +45,89 @@ class MaaCoreBeta < Formula
     sha256 "4a74b0f90178384124a97324e86edd4aa0fed44ac280e23cf3454513b14e0a6a"
   end
 
+  unless build.with? "opencv"
+    depends_on "jpeg-turbo"
+    depends_on "libpng"
+    depends_on "libtiff"
+
+    resource "opencv" do
+      url "https://github.com/opencv/opencv/archive/refs/tags/4.9.0.tar.gz"
+      sha256 "ddf76f9dffd322c7c3cb1f721d0887f62d747b82059342213138dc190f28bc6c"
+    end
+  end
+
   def install
+    unless build.with? "opencv"
+      resource("opencv").stage "opencv"
+
+      # Remove bundled libraries to make sure formula dependencies are used
+      libdirs = %w[ffmpeg libjasper libjpeg libjpeg-turbo libpng libtiff libwebp openexr openjpeg zlib]
+      libdirs.each { |l| (buildpath/"opencv/3rdparty"/l).rmtree }
+
+      # basic cmake args for opencv
+      opencv_cmake_args = %W[
+        -DCMAKE_CXX_STANDARD=17
+
+        -DBUILD_SHARED_LIBS=OFF
+
+        -DBUILD_ZLIB=OFF
+
+        -DWITH_PNG=ON
+        -DBUILD_PNG=OFF
+        -DWITH_JPEG=ON
+        -DBUILD_JPEG=OFF
+        -DWITH_TIFF=ON
+        -DBUILD_TIFF=OFF
+
+        -DWITH_WEBP=OFF
+        -DBUILD_WEBP=OFF
+        -DWITH_OPENJPEG=OFF
+        -DBUILD_OPENJPEG=OFF
+        -DWITH_JASPER=OFF
+        -DBUILD_JASPER=OFF
+        -DWITH_OPENEXR=OFF
+        -DBUILD_OPENEXR=OFF
+
+        -DWITH_FFMPEG=#{OS.linux? ? "ON" : "OFF"}
+        -DWITH_V4L=OFF
+        -DWITH_GSTREAMER=OFF
+        -DWITH_DSHOW=OFF
+        -DWITH_1394=OFF
+        -DWITH_CUDA=OFF
+      ]
+    end
+
+    # build fastdeploy_ppocr
+    resource("fastdeploy_ppocr").stage "fastdeploy_ppocr"
+    fastdeploy_cmake_args = %w[
+      -DBUILD_SHARED_LIBS=OFF
+      -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+    ]
+    # build opencv for fastdeploy_ppocr
+    unless build.with? "opencv"
+      opencv_buildpath = buildpath/"opencv/build-fastdeploy"
+      system "cmake", "-S", "opencv", "-B", opencv_buildpath,
+        "-DBUILD_LIST=core,imgproc,imgcodecs", "-DWITH_EIGEN=ON",
+        *opencv_cmake_args, *std_cmake_args
+      # Remove reference to shims directory
+      inreplace opencv_buildpath/"modules/core/version_string.inc", "#{Superenv.shims_path}/", ""
+      system "cmake", "--build", opencv_buildpath
+      fastdeploy_cmake_args << "-DOpenCV_DIR=#{opencv_buildpath}"
+    end
+    cd "fastdeploy_ppocr" do
+      system "cmake", "-S", ".", "-B", "build", *fastdeploy_cmake_args, *std_cmake_args
+      system "cmake", "--build", "build"
+    end
+    # patch CMakeLists.txt to use our own fastdeploy_ppocr
+    inreplace "CMakeLists.txt" do |s|
+      s.gsub!(/find_package\(MaaDerpLearning.*\)/,
+              "include_directories(${FASTDEPLOY_INCLUDE_DIRS})")
+      s.gsub!(/target_link_libraries\((.*)MaaDerpLearning(.*)\)/,
+              "target_link_libraries(\\1${FASTDEPLOY_LIBS}\\2)")
+    end
+
+    # build maa-core
+
     # patch CMakeLists.txt
     inreplace "CMakeLists.txt" do |s|
       s.gsub! "RUNTIME\sDESTINATION\s.", ""
@@ -51,22 +135,13 @@ class MaaCoreBeta < Formula
       s.gsub! "PUBLIC_HEADER\sDESTINATION\s.", ""
       s.gsub! "find_package(asio ", "# find_package(asio "
       s.gsub! "asio::asio", ""
-      s.gsub! "find_package(MaaDerpLearning ", "# find_package(MaaDerpLearning "
-      s.gsub! "MaaDerpLearning", "fastdeploy_ppocr"
-      s.gsub!(/^(list\(APPEND CMAKE_MODULE_PATH.*)\n/, <<~EOS
-        \\1
-
-        add_subdirectory( ${SOURCE_DIR_FASTDEPLOY} ${BINARY_DIR_FASTDEPLOY} EXCLUDE_FROM_ALL SYSTEM)
-        include_directories(SYSTEM ${SOURCE_DIR_FASTDEPLOY})
-        install(TARGETS fastdeploy_ppocr)
-        message(${CMAKE_CURRENT_LIST_FILE})
-      EOS
-      )
     end
 
-    # patch ONNXRuntime
-    # The ONNXRuntime header files are installed to $HOMEBREW_PREFIX/include/onnxruntime
-    # The ONNXRuntime should be all lowercase for fastdeploy_ppocr
+    # patch onnxruntime, the onnxruntime used by upstream is too old,
+    # so we need to patch it to use the new onnxruntime installed by homebrew.
+    # Major differences:
+    # - the include directory is changed from onnxruntime/core/session to onnxruntime
+    # - the package name is changed from ONNXRuntime to onnxruntime
     inreplace "CMakeLists.txt", "ONNXRuntime", "onnxruntime"
     inreplace "cmake/FindONNXRuntime.cmake" do |s|
       s.gsub! "find_path(ONNXRuntime_INCLUDE_DIR NAMES onnxruntime/core/session/onnxruntime_c_api.h)",
@@ -80,20 +155,30 @@ class MaaCoreBeta < Formula
     ]
     inreplace onnxruntime_related_files, "onnxruntime/core/session", "onnxruntime"
 
-    (buildpath/"fastdeploy_ppocr").install resource("fastdeploy_ppocr")
-
-    cmake_args = %W[
+    maacore_cmake_args = %W[
       -DBUILD_SHARED_LIBS=ON
       -DCMAKE_POSITION_INDEPENDENT_CODE=ON
       -DUSE_MAADEPS=OFF
       -DINSTALL_PYTHON=OFF
       -DINSTALL_RESOURCE=OFF
-      -DSOURCE_DIR_FASTDEPLOY=#{buildpath/"fastdeploy_ppocr"}
-      -DBINARY_DIR_FASTDEPLOY=#{buildpath/"build-fastdeploy_ppocr"}
+      -DFASTDEPLOY_INCLUDE_DIRS=#{buildpath/"fastdeploy_ppocr"}
+      -DFASTDEPLOY_LIBS=#{buildpath/"fastdeploy_ppocr/build/libfastdeploy_ppocr.a"}
       -DMAA_VERSION=v#{version}
     ]
 
-    system "cmake", "-S", ".", "-B", "build", *cmake_args, *std_cmake_args
+    # build opencv for maacore
+    unless build.with? "opencv"
+      opencv_buildpath = buildpath/"opencv/build-maacore"
+      system "cmake", "-S", "opencv", "-B", opencv_buildpath,
+        "-DBUILD_LIST=core,imgproc,imgcodecs,videoio", "-DWITH_EIGEN=OFF",
+        *opencv_cmake_args, *std_cmake_args
+      # Remove reference to shims directory
+      inreplace opencv_buildpath/"modules/core/version_string.inc", "#{Superenv.shims_path}/", ""
+      system "cmake", "--build", opencv_buildpath
+      maacore_cmake_args << "-DOpenCV_DIR=#{opencv_buildpath}"
+    end
+
+    system "cmake", "-S", ".", "-B", "build", *maacore_cmake_args, *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
 

@@ -27,9 +27,6 @@ class FastdeployPpocr < Formula
   depends_on "onnxruntime"
   depends_on "opencv"
 
-  conflicts_with "maa-core", { because: "both provide libfastdeploy_ppocr" }
-  conflicts_with "maa-core-beta", { because: "both provide libfastdeploy_ppocr" }
-
   def install
     cmake_args = %w[
       -DBUILD_SHARED_LIBS=ON

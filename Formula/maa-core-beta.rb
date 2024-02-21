@@ -32,6 +32,7 @@ class MaaCoreBeta < Formula
   uses_from_macos "curl"
 
   conflicts_with "maa-core", { because: "both provide libMaaCore" }
+  conflicts_with "fastdeploy_ppocr", { because: "both provide libfastdeploy_ppocr" }
 
   fails_with gcc: "11"
 

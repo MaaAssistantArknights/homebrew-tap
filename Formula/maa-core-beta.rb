@@ -12,8 +12,10 @@ class MaaCoreBeta < Formula
 
   bottle do
     root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-beta-5.1.0"
-    sha256 cellar: :any,                 ventura:      "68eaa49d0543c8d769bb571edd9cee614939d4fc36fa2773ce8db327aa1025bb"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "fbc7b12ea4ba51d1f3bc23d601abb7891b676e914932a34e6a3ef27be3b4e4cc"
+    rebuild 1
+    sha256                               arm64_sonoma: "faf8209e02531ad3db4ce440d843e0ab8bc8ef03269e5602a51ac8815be1dc43"
+    sha256                               ventura:      "681c86059913ae29377b9a3e034034db1f38216d132bd0e465200146a7cae02c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "7d91299010b5e496f3c485d79d127ff062672fa29d827610af03183d6560d6ac"
   end
 
   option "with-resource", "Install resource files" if OS.linux?

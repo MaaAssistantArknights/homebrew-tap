@@ -22,18 +22,48 @@ brew install <formula>
 ### Formulae
 
 - `maa-cli`: MAA 命令行工具 (MAA CLI tool)。
+- `maa-cli-beta`: MAA 命令行工具的测试版本 (Beta version for MAA CLI tool)。
 - `maa-core`: MAA 核心库 `libMaaCore.(so|dylib)` (MAA Core)。
 - `maa-core-beta`: MAA 核心库的测试版本（Beta version for MAA Core)。
 
-**注意**：由于 GitHub 没有提供 `arm` 架构的免费 runner，因此不提供相应的预编译 bottle。如果你在 `arm64` 架构的 macOS 或者 Linux 上使用 `brew`，`brew` 会自动从源码编译。macOS 用户也可以使用 `maa-cli-bin` 这个 cask 来安装 `maa-cli` 的通用二进制版本。
+#### 预编译 bottle (Prebuilt bottle)
 
-**Note**: Due to the absence of a free runner for the `arm` architecture in Github Action, the prebuilt `arm` bottle is currently unavailable. If you're using `brew` to install formulae on an `arm` architecture macOS or Linux, `brew` will automatically compile it from the source. For macOS users, the `maa-cli-bin` cask provides an alternative, allowing the installation of the universal binary version of `maa-cli`.
+由于 Homebrew 不支持交叉编译，且由于 GitHub Action runner 支持有限，目前只提供部份平台的预编译 bottle。
+
+Due to the limitation of Homebrew and GitHub Action runner, we only provide prebuilt bottle for some platforms.
+
+<table>
+    <thead>
+        <tr>
+            <th>操作系统 (OS) </th>
+            <th>处理器架构 (Architecture)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>macOS 14 (Sonoma)</td>
+            <td>aarch64 (Apple Silicon)</td>
+        </tr>
+        <tr>
+            <td>macOS 13 (Ventura)</td>
+            <td>x86_64</td>
+        </tr>
+        <tr>
+            <td>macOS 12 (Monterey)</td>
+            <td>x86_64</td>
+        </tr>
+        <tr>
+            <td>Linux</td>
+            <td>x86_64</td>
+        </tr>
+    </tbody>
+</table>
 
 ### Casks (only for macOS)
 
 - `maa-cli-bin`: `maa-cli` 的二进制版本 (Binary version of `maa-cli`)；
 - `maa-gui`: MAA macOS 图形界面 (MAA macOS GUI)；
-- `maa-gui-beta`: MAA macOS 图形界面的测试版本 (Test version of MAA macOS GUI)。
+- `maa-gui-beta`: MAA macOS 图形界面的测试版本 (Beta version of MAA macOS GUI)。
 
 ## 开发者指引 (Developer guide)
 

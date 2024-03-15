@@ -1,8 +1,8 @@
 class MaaCore < Formula
   desc "Maa Arknights assistant Library"
   homepage "https://github.com/MaaAssistantArknights/MaaAssistantArknights/"
-  url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.1.0.tar.gz"
-  sha256 "388a3f81dbd4f4623f0e51e800e6492fd35f4321389c9003443810f719c24d18"
+  url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.2.0.tar.gz"
+  sha256 "10765b75c241946a7a4968ca3c78f0a0e4c1eea0ff4675047e2091524ee81961"
   license "AGPL-3.0-only"
 
   livecheck do
@@ -41,8 +41,8 @@ class MaaCore < Formula
   fails_with gcc: "11"
 
   resource "fastdeploy_ppocr" do
-    url "https://github.com/MaaAssistantArknights/FastDeploy/archive/d0b018ac6c3daa22c7b55b555dc927a5c734d430.tar.gz"
-    sha256 "4a74b0f90178384124a97324e86edd4aa0fed44ac280e23cf3454513b14e0a6a"
+    url "https://github.com/MaaAssistantArknights/FastDeploy/archive/0db6000aaac250824266ac37451f43ce272d80a3.tar.gz"
+    sha256 "ac0bf5059f0339003e3e6e50c87e9455be508761e101e8898135f67b8a7c8115"
   end
 
   unless build.with? "opencv"
@@ -107,7 +107,7 @@ class MaaCore < Formula
     unless build.with? "opencv"
       opencv_buildpath = buildpath/"opencv/build-fastdeploy"
       system "cmake", "-S", "opencv", "-B", opencv_buildpath,
-        "-DBUILD_LIST=core,imgproc,imgcodecs", "-DWITH_EIGEN=ON",
+        "-DBUILD_LIST=core,imgproc", "-DWITH_EIGEN=ON",
         *opencv_cmake_args, *std_cmake_args
       # Remove reference to shims directory
       inreplace opencv_buildpath/"modules/core/version_string.inc", "#{Superenv.shims_path}/", ""

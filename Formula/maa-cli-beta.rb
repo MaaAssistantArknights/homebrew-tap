@@ -11,11 +11,11 @@ class MaaCliBeta < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-cli-beta-0.4.5-beta.1"
-    sha256 cellar: :any,                 arm64_sonoma: "3ff1c2f1760534b49ed5097e69c13d8c17f711780d8d708f8b952a09ab947d09"
-    sha256 cellar: :any,                 ventura:      "375f3635dd336da0274dcc781df4d247a6caac1752bb7b9f3b80bc284fb68e07"
-    sha256 cellar: :any,                 monterey:     "3203e0c5db65ab63888bb11fb4fb92eb0b5519af4179bb86fa9a942f04e31118"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "56e4bbb9497d9c1fd3bc06d9646464e01b0131665014ea427b1258003f46c78f"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-cli-beta-0.4.5-beta.2"
+    sha256 cellar: :any,                 arm64_sonoma: "e538a85e962a671892fbb097102a3c98b26cfa5b7cb9a49d44a128e95b4cd181"
+    sha256 cellar: :any,                 ventura:      "606550c8c560d5f34f50695a8e04f77388b12564cc02ec9c536aee70cee0ac85"
+    sha256 cellar: :any,                 monterey:     "767185810b7dd6626273101ade64a309a7224dc902aa374e942dd5879c013b43"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "e7b0a8f1cd43fb859e3e88d125a346a68ef16c223346487377aaa7e5ce8927a5"
   end
 
   option "without-git2", "Don't build with libgit2 resource updater backend"

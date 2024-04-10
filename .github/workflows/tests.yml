@@ -44,7 +44,7 @@ jobs:
 
       - name: Upload bottles as artifact
         if: always() && github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3-node20 # we can't use v4 until homebrew supports it
         with:
           name: bottles
           path: "*.bottle.*"

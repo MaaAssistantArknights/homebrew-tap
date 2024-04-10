@@ -3,7 +3,7 @@ class MaaCli < Formula
   homepage "https://github.com/MaaAssistantArknights/maa-cli/"
   url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.4.5.tar.gz"
   sha256 "af9f23549dd3d29356510ab5043d409ca549cf4483fdcd55d9019143386f619e"
-  license "AGPL-3.0-or-later"
+  license "AGPL-3.0-only"
 
   bottle do
     root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-cli-0.4.5"

@@ -3,7 +3,7 @@ class MaaCliBeta < Formula
   homepage "https://github.com/MaaAssistantArknights/maa-cli/"
   url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.4.6-beta.1.tar.gz"
   sha256 "23871c1633afd9cbd24dbed31264dba30d196ea09abdfe940e023d92ccdf2383"
-  license "AGPL-3.0-or-later"
+  license "AGPL-3.0-only"
 
   livecheck do
     url :url

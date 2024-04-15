@@ -1,8 +1,8 @@
 class MaaCore < Formula
   desc "Maa Arknights assistant Library"
   homepage "https://github.com/MaaAssistantArknights/MaaAssistantArknights/"
-  url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.2.0.tar.gz"
-  sha256 "10765b75c241946a7a4968ca3c78f0a0e4c1eea0ff4675047e2091524ee81961"
+  url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.2.1.tar.gz"
+  sha256 "a3208e8d5c4a2c54634d1c0660a37cad93d0ce40f1279be8f5d914fb11a454dd"
   license "AGPL-3.0-only"
 
   livecheck do

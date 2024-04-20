@@ -23,6 +23,7 @@ jobs:
           core: false
           cask: false
           test-bot: false
+          token: ${{ github.token }}
 
       - name: Cache Homebrew Bundler RubyGems
         id: cache
@@ -60,11 +61,10 @@ jobs:
         env:
           Branch: ${{ github.event.pull_request.head.ref }}
         run: |
-          git config --local http.https://github.com/.extraheader 'AUTHORIZATION: basic ${{ github.token }}'
           bottle_commit=$(git rev-parse HEAD)
           git checkout "$Branch"
           git cherry-pick "$bottle_commit"
-          git push origin "$Branch"
+          git push -v origin "$Branch"
 
       - name: Wait for Remote Branch to be Updated
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}

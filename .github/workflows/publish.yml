@@ -7,7 +7,9 @@ on:
 jobs:
   pr-pull:
     if: contains(github.event.pull_request.labels.*.name, 'Automerge')
-    runs-on: macos-14
+    runs-on: ubuntu-22.04
+    container:
+      image: ghcr.io/homebrew/ubuntu22.04:master
     permissions:
       actions: read
       pull-requests: write
@@ -53,12 +55,15 @@ jobs:
             --workflows ci.yml \
             '${{ github.event.pull_request.number }}'
 
-      - name: Push commits
-        uses: Homebrew/actions/git-try-push@master
-        with:
-          token: ${{ github.token }}
-          branch: ${{ github.event.pull_request.head.ref }}
-          directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
+      - name: Cherry Pick Bottle Commit and Push to PR Branch
+        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
+        env:
+          Branch: ${{ github.event.pull_request.head.ref }}
+        run: |
+          bottle_commit=$(git rev-parse HEAD)
+          git checkout "$Branch"
+          git cherry-pick "$bottle_commit"
+          git push origin "$Branch"
 
       - name: Wait for Remote Branch to be Updated
         run: |

@@ -60,12 +60,14 @@ jobs:
         env:
           Branch: ${{ github.event.pull_request.head.ref }}
         run: |
+          git config --local http.https://github.com/.extraheader 'AUTHORIZATION: basic ${{ github.token }}'
           bottle_commit=$(git rev-parse HEAD)
           git checkout "$Branch"
           git cherry-pick "$bottle_commit"
           git push origin "$Branch"
 
       - name: Wait for Remote Branch to be Updated
+        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
         run: |
           local_head=$(git rev-parse HEAD)
           remote_ref='pull/${{ github.event.pull_request.number }}/head'
@@ -93,10 +95,12 @@ jobs:
           fi
 
       - name: Approve Pull Request
+        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
         run: |
           gh pr review '${{ github.event.pull_request.number }}' --approve
 
       - name: Enable Auto Merge
+        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
         run: |
           gh pr merge '${{ github.event.pull_request.number }}' \
             --auto \

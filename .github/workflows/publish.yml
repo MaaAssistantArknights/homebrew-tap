@@ -7,9 +7,7 @@ on:
 jobs:
   pr-pull:
     if: contains(github.event.pull_request.labels.*.name, 'Automerge')
-    runs-on: ubuntu-22.04
-    container:
-      image: ghcr.io/homebrew/ubuntu22.04:master
+    runs-on: macos-14
     permissions:
       actions: read
       pull-requests: write
@@ -17,11 +15,24 @@ jobs:
       packages: write
     steps:
       - name: Set up Homebrew
+        id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@master
         with:
           core: false
           cask: false
           test-bot: false
+
+      - name: Cache Homebrew Bundler RubyGems
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.set-up-homebrew.outputs.gems-path }}
+          key: ${{ runner.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
+          restore-keys: ${{ runner.os }}-rubygems-
+
+      - name: Install Homebrew Bundler RubyGems
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: brew install-bundler-gems
 
       - name: Configure Git User
         uses: Homebrew/actions/git-user-config@master
@@ -47,6 +58,7 @@ jobs:
         with:
           token: ${{ github.token }}
           branch: ${{ github.event.pull_request.head.ref }}
+          directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
 
       - name: Wait for Remote Branch to be Updated
         run: |

@@ -1,35 +1,85 @@
-name: brew pr-pull
+name: Publish Bottles and Merge PR
 on:
   pull_request_target:
     types:
       - labeled
+
 jobs:
   pr-pull:
-    if: contains(github.event.pull_request.labels.*.name, 'pr-pull')
+    if: contains(github.event.pull_request.labels.*.name, 'Automerge')
     runs-on: ubuntu-22.04
+    container:
+      image: ghcr.io/homebrew/ubuntu22.04:master
+    permissions:
+      actions: read
+      pull-requests: write
     steps:
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@master
+        with:
+          core: false
+          cask: false
+          test-bot: false
 
-      - name: Set up git
+      - name: Configure Git User
         uses: Homebrew/actions/git-user-config@master
+        with:
+          username: ${{ github.event_name == 'schedule' && 'github-actions[bot]' || github.actor }}
 
-      - name: Pull bottles
+      - name: Pull and Publish Bottles
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ github.token }}
           HOMEBREW_GITHUB_PACKAGES_TOKEN: ${{ github.token }}
           HOMEBREW_GITHUB_PACKAGES_USER: ${{ github.actor }}
           PULL_REQUEST: ${{ github.event.pull_request.number }}
-        run: brew pr-pull --debug --tap=$GITHUB_REPOSITORY $PULL_REQUEST
+        run: |
+          brew pr-pull \
+            --debug \
+            --artifact-pattern 'bottles_*' \
+            --tap="$GITHUB_REPOSITORY" \
+            --workflows ci.yml \
+            '${{ github.event.pull_request.number }}'
 
       - name: Push commits
         uses: Homebrew/actions/git-try-push@master
         with:
           token: ${{ github.token }}
-          branch: main
+          branch: ${{ github.event.pull_request.head.ref }}
 
-      - name: Delete branch
-        if: github.event.pull_request.head.repo.fork == false
-        env:
-          BRANCH: ${{ github.event.pull_request.head.ref }}
-        run: git push --delete origin $BRANCH
+      - name: Wait for Remote Branch to be Updated
+        run: |
+          local_head=$(git rev-parse HEAD)
+          remote_ref='pull/${{ github.event.pull_request.number }}/head'
+
+          attempt=0
+          max_attempts=10
+          timeout=1
+
+          # Wait (with exponential backoff) until the PR branch is in sync
+          while [[ "$attempt" -lt "$max_attempts" ]]; do
+            remote_head="$(git ls-remote origin "$remote_ref" | cut -f1)"
+            if [[ "$local_head" = "$remote_head" ]]
+            then
+              success=1
+              break
+            fi
+            sleep "$timeout"
+            attempt=$(( attempt + 1 ))
+            timeout=$(( timeout * 2 ))
+          done
+
+          if [[ "$success" -ne 1 ]]; then
+            echo "Remote branch not updated after ${max_attempts} attempts"
+            exit 1
+          fi
+
+      - name: Approve Pull Request
+        run: |
+          gh pr review '${{ github.event.pull_request.number }}' --approve
+
+      - name: Enable Auto Merge
+        run: |
+          gh pr merge '${{ github.event.pull_request.number }}' \
+            --auto \
+            --merge \
+            --delete-branch

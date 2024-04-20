@@ -1,4 +1,4 @@
-name: Brew test-bot
+name: Build, Test and Upload Bottles
 on:
   push:
     branches:
@@ -6,7 +6,8 @@ on:
   pull_request:
 
 jobs:
-  test-bot:
+  build:
+    name: Build
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -42,10 +43,10 @@ jobs:
       - run: brew test-bot --only-formulae
         if: github.event_name == 'pull_request'
 
-      - name: Upload bottles as artifact
+      - name: Upload Bottles as Artifact
         if: always() && github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v3-node20 # we can't use v4 until homebrew supports it
+        uses: actions/upload-artifact@v4
         with:
-          name: bottles
+          name: bottles_${{ matrix.os }}
           path: "*.bottle.*"
-          if-no-files-found: ignore
+          if-no-files-found: warn

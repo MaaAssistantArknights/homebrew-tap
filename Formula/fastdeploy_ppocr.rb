@@ -11,12 +11,11 @@ class FastdeployPpocr < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/fastdeploy_ppocr-2023.10.29"
-    rebuild 2
-    sha256 cellar: :any,                 arm64_sonoma: "587f1b1efd13930019cdc90c2c7a58f4bfff211461b7eb55a2399d4a9eeb9e7b"
-    sha256 cellar: :any,                 ventura:      "d039dcaa0770e17e23ebef7239671e9273b051c61479d2ae27020c60543521b7"
-    sha256 cellar: :any,                 monterey:     "8c339ab26dd236217624f8be08c5a5eb26194bb4a9232e6fd0f1ae3cf35dd6de"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "5c7ad47f50ff03bd10baacfebbdc6dabbcc7d765247e288fd28da3dd0fbb675b"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/fastdeploy_ppocr-2024.3.13"
+    sha256 cellar: :any,                 arm64_sonoma: "bac8eae8a274248b0b30c7fdeb4db7ef0c1658fac36d915c2f1620bc41ceeff3"
+    sha256 cellar: :any,                 ventura:      "605022520cf4f45c2d7a28f330cd3f2cb23411ea981d0ae6888bb1df4ffa1ade"
+    sha256 cellar: :any,                 monterey:     "e30658dad92c79e6b738d279770054a7f19863ef5adbabfc62f95143eb4afe12"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "ef23b52422b08e03e04bf1df794e3cb7dfb669ee013bf18016fbac4a1c9eb7b0"
   end
 
   deprecate! date: "2024-02-20", because: "this formula is now shipped by MaaCore"

@@ -1,9 +1,9 @@
 class FastdeployPpocr < Formula
   desc "Stripped-down version of PaddlePaddle/FastDeploy"
   homepage "https://github.com/MaaAssistantArknights/FastDeploy"
-  url "https://github.com/MaaAssistantArknights/FastDeploy/archive/d0b018ac6c3daa22c7b55b555dc927a5c734d430.tar.gz"
-  version "2023.10.29"
-  sha256 "4a74b0f90178384124a97324e86edd4aa0fed44ac280e23cf3454513b14e0a6a"
+  url "https://github.com/MaaAssistantArknights/FastDeploy/archive/0db6000aaac250824266ac37451f43ce272d80a3.tar.gz"
+  version "2024.3.13"
+  sha256 "ac0bf5059f0339003e3e6e50c87e9455be508761e101e8898135f67b8a7c8115"
   license "Apache-2.0"
 
   livecheck do
@@ -19,7 +19,7 @@ class FastdeployPpocr < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux: "5c7ad47f50ff03bd10baacfebbdc6dabbcc7d765247e288fd28da3dd0fbb675b"
   end
 
-  deprecate! date: "2024-02-20", because: "this formula is now shiped by MaaCore"
+  deprecate! date: "2024-02-20", because: "this formula is now shipped by MaaCore"
 
   depends_on "cmake" => :build
   depends_on "eigen" => :build

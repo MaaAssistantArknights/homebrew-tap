@@ -21,7 +21,6 @@ jobs:
           core: false
           cask: false
           test-bot: false
-          token: ${{ github.token }}
 
       - name: Cache Homebrew Bundler RubyGems
         id: cache

@@ -26,6 +26,7 @@ class MaaCliBeta < Formula
   # openssl is always required on Linux
   # while it's only required on macOS when building with git2
   depends_on "openssl" if OS.linux? || build.with?("git2")
+  depends_on "libgit2" => :recommended
   uses_from_macos "zlib"
 
   conflicts_with "maa-cli", { because: "both provide maa" }

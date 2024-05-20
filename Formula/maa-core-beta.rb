@@ -177,6 +177,8 @@ class MaaCoreBeta < Formula
       maacore_cmake_args << "-DOpenCV_DIR=#{opencv_buildpath}"
     end
 
+    ENV.append "CXXFLAGS", "-DASST_WITH_EMULATOR_EXTRAS=0"
+
     system "cmake", "-S", ".", "-B", "build", *maacore_cmake_args, *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"

@@ -23,7 +23,7 @@ class MaaCoreBeta < Formula
   depends_on "asio" => :build
   depends_on "cmake" => :build
   depends_on "eigen" => :build
-  depends_on "range-v3" => :build
+  depends_on "range-v3" => :build if OS.mac?
 
   depends_on "cpr"
   depends_on macos: :ventura # upstream only compiles on macOS 13
@@ -177,6 +177,7 @@ class MaaCoreBeta < Formula
       maacore_cmake_args << "-DOpenCV_DIR=#{opencv_buildpath}"
     end
 
+    ENV.append "CXXFLAGS", "-DASST_USE_RANGES_RANGE_V3=1" if OS.mac?
     ENV.append "CXXFLAGS", "-DASST_WITH_EMULATOR_EXTRAS=0"
 
     system "cmake", "-S", ".", "-B", "build", *maacore_cmake_args, *std_cmake_args

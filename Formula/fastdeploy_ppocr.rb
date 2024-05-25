@@ -5,7 +5,7 @@ class FastdeployPpocr < Formula
   version "2024.3.13"
   sha256 "ac0bf5059f0339003e3e6e50c87e9455be508761e101e8898135f67b8a7c8115"
   license "Apache-2.0"
-  revision 1
+  revision 2
 
   livecheck do
     skip "This formula is not tagged, so there is no version to check"
@@ -18,8 +18,6 @@ class FastdeployPpocr < Formula
     sha256 monterey:     "64a6c301bec5df181aaef2477448574811b38187e1e226cbae08f82534b7fca6"
     sha256 x86_64_linux: "849547976d842c691940b80ca637f86f621548181048c8159822f1b908cc70e0"
   end
-
-  deprecate! date: "2024-02-20", because: "this formula is now shipped by MaaCore"
 
   depends_on "cmake" => :build
   depends_on "eigen" => :build

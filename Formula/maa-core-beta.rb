@@ -1,8 +1,8 @@
 class MaaCoreBeta < Formula
   desc "Maa Arknights assistant Library (beta)"
   homepage "https://github.com/MaaAssistantArknights/MaaAssistantArknights/"
-  url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.3.0-beta.3.tar.gz"
-  sha256 "2071e454abbb92705d9ffa69355af5be0a64143ae37ecae29e62818b21ec0437"
+  url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.3.0.tar.gz"
+  sha256 "b5ebd040619b7d0efa8463183bcbb672b1b13a6e52e103370f4ba79973aec0a7"
   license "AGPL-3.0-only"
 
   livecheck do
@@ -22,10 +22,9 @@ class MaaCoreBeta < Formula
 
   depends_on "asio" => :build
   depends_on "cmake" => :build
-  depends_on "eigen" => :build
-  depends_on "range-v3" => :build if OS.mac?
 
   depends_on "cpr"
+  depends_on "fastdeploy_ppocr"
   depends_on macos: :ventura # upstream only compiles on macOS 13
   depends_on "onnxruntime"
 
@@ -34,6 +33,11 @@ class MaaCoreBeta < Formula
   depends_on "opencv" => :optional
 
   uses_from_macos "curl"
+
+  # Apple clang < 15.0.0 does not fully support std::ranges
+  on_ventura :or_older do
+    depends_on "range-v3" => :build
+  end
 
   conflicts_with "maa-core", { because: "both provide libMaaCore" }
 
@@ -55,7 +59,23 @@ class MaaCoreBeta < Formula
     end
   end
 
+  # Force find onnxruntime in CONFIG mode
+  patch :DATA
+
   def install
+    maacore_cmake_args = %W[
+      -DBUILD_SHARED_LIBS=ON
+      -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+      -DUSE_MAADEPS=OFF
+      -DINSTALL_PYTHON=OFF
+      -DINSTALL_RESOURCE=OFF
+      -DINSTALL_FLATTEN=OFF
+      -DWITH_EMULATOR_EXTRAS=OFF
+      -DMAA_VERSION=v#{version}
+    ]
+
+    maacore_cmake_args << "-DUSE_RANGE_V3=ON" if OS.mac? && MacOS.version <= :ventura
+
     unless build.with? "opencv"
       resource("opencv").stage "opencv"
 
@@ -68,6 +88,8 @@ class MaaCoreBeta < Formula
         -DCMAKE_CXX_STANDARD=17
 
         -DBUILD_SHARED_LIBS=OFF
+
+        -DBUILD_LIST=core,imgproc,imgcodecs,videoio
 
         -DBUILD_ZLIB=OFF
 
@@ -94,91 +116,15 @@ class MaaCoreBeta < Formula
         -DWITH_1394=OFF
         -DWITH_CUDA=OFF
       ]
-    end
 
-    # build fastdeploy_ppocr
-    resource("fastdeploy_ppocr").stage "fastdeploy_ppocr"
-    fastdeploy_cmake_args = %w[
-      -DBUILD_SHARED_LIBS=OFF
-      -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-    ]
-    # build opencv for fastdeploy_ppocr
-    unless build.with? "opencv"
-      opencv_buildpath = buildpath/"opencv/build-fastdeploy"
+      opencv_buildpath = buildpath/"build/opencv"
       system "cmake", "-S", "opencv", "-B", opencv_buildpath,
-        "-DBUILD_LIST=core,imgproc", "-DWITH_EIGEN=ON",
-        *opencv_cmake_args, *std_cmake_args
-      # Remove reference to shims directory
-      inreplace opencv_buildpath/"modules/core/version_string.inc", "#{Superenv.shims_path}/", ""
-      system "cmake", "--build", opencv_buildpath
-      fastdeploy_cmake_args << "-DOpenCV_DIR=#{opencv_buildpath}"
-    end
-    cd "fastdeploy_ppocr" do
-      system "cmake", "-S", ".", "-B", "build", *fastdeploy_cmake_args, *std_cmake_args
-      system "cmake", "--build", "build"
-    end
-    # patch CMakeLists.txt to use our own fastdeploy_ppocr
-    inreplace "CMakeLists.txt" do |s|
-      s.gsub!(/find_package\(MaaDerpLearning.*\)/,
-              "include_directories(${FASTDEPLOY_INCLUDE_DIRS})")
-      s.gsub!(/target_link_libraries\((.*)MaaDerpLearning(.*)\)/,
-              "target_link_libraries(\\1${FASTDEPLOY_LIBS}\\2)")
-    end
-
-    # build maa-core
-
-    # patch CMakeLists.txt
-    inreplace "CMakeLists.txt" do |s|
-      s.gsub! "RUNTIME\sDESTINATION\s.", ""
-      s.gsub! "LIBRARY\sDESTINATION\s.", ""
-      s.gsub! "PUBLIC_HEADER\sDESTINATION\s.", ""
-      s.gsub! "find_package(asio ", "# find_package(asio "
-      s.gsub! "asio::asio", ""
-    end
-
-    # patch onnxruntime, the onnxruntime used by upstream is too old,
-    # so we need to patch it to use the new onnxruntime installed by homebrew.
-    # Major differences:
-    # - the include directory is changed from onnxruntime/core/session to onnxruntime
-    # - the package name is changed from ONNXRuntime to onnxruntime
-    inreplace "CMakeLists.txt", "ONNXRuntime", "onnxruntime"
-    inreplace "cmake/FindONNXRuntime.cmake" do |s|
-      s.gsub! "find_path(ONNXRuntime_INCLUDE_DIR NAMES onnxruntime/core/session/onnxruntime_c_api.h)",
-        "find_path(onnxruntime_INCLUDE_DIR NAMES onnxruntime_c_api.h PATH_SUFFIXES onnxruntime)"
-      s.gsub! "ONNXRuntime", "onnxruntime"
-    end
-    onnxruntime_related_files = %w[
-      src/MaaCore/Config/OnnxSessions.h
-      src/MaaCore/Vision/Battle/BattlefieldDetector.cpp
-      src/MaaCore/Vision/Battle/BattlefieldClassifier.cpp
-    ]
-    inreplace onnxruntime_related_files, "onnxruntime/core/session", "onnxruntime"
-
-    maacore_cmake_args = %W[
-      -DBUILD_SHARED_LIBS=ON
-      -DCMAKE_POSITION_INDEPENDENT_CODE=ON
-      -DUSE_MAADEPS=OFF
-      -DINSTALL_PYTHON=OFF
-      -DINSTALL_RESOURCE=OFF
-      -DFASTDEPLOY_INCLUDE_DIRS=#{buildpath/"fastdeploy_ppocr"}
-      -DFASTDEPLOY_LIBS=#{buildpath/"fastdeploy_ppocr/build/libfastdeploy_ppocr.a"}
-      -DMAA_VERSION=v#{version}
-    ]
-
-    # build opencv for maacore
-    unless build.with? "opencv"
-      opencv_buildpath = buildpath/"opencv/build-maacore"
-      system "cmake", "-S", "opencv", "-B", opencv_buildpath,
-        "-DBUILD_LIST=core,imgproc,imgcodecs,videoio", "-DWITH_EIGEN=OFF",
         *opencv_cmake_args, *std_cmake_args
       # Remove reference to shims directory
       inreplace opencv_buildpath/"modules/core/version_string.inc", "#{Superenv.shims_path}/", ""
       system "cmake", "--build", opencv_buildpath
       maacore_cmake_args << "-DOpenCV_DIR=#{opencv_buildpath}"
     end
-
-    ENV.append "CXXFLAGS", "-DASST_USE_RANGES_RANGE_V3=1" if OS.mac?
-    ENV.append "CXXFLAGS", "-DASST_WITH_EMULATOR_EXTRAS=0"
 
     system "cmake", "-S", ".", "-B", "build", *maacore_cmake_args, *std_cmake_args
     system "cmake", "--build", "build"
@@ -187,3 +133,18 @@ class MaaCoreBeta < Formula
     (share/"maa").install "resource" if build.with? "resource"
   end
 end
+
+__END__
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 240a7b212..81748becb 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -91,7 +91,7 @@ if(USE_MAADEPS)
+     find_package(MaaDerpLearning REQUIRED)
+     list(APPEND maa_libs MaaDerpLearning)
+ else()
+-    find_package(onnxruntime REQUIRED) # provided by onnxruntime>=1.16
++    find_package(onnxruntime CONFIG REQUIRED) # provided by onnxruntime>=1.16
+     list(APPEND maa_libs onnxruntime::onnxruntime)
+     if(DEFINED fastdeploy_SOURCE_DIR)
+         # TODO: FetchContent github.com/MaaAssistantArknights/FastDeploy

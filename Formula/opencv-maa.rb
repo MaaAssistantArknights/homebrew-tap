@@ -20,6 +20,7 @@ class OpencvMaa < Formula
 
   on_linux do
     depends_on "ffmpeg@6"
+    depends_on "openblas"
   end
 
   conflicts_with "opencv", { because: "this is a minimal build of OpenCV" }
@@ -65,6 +66,7 @@ class OpencvMaa < Formula
 
     if OS.linux?
       cmake_args += %W[
+        -DOpenBLAS_LIB=#{Formula["openblas"].opt_lib}/libopenblas.so
         -DPNG_LIBRARY=#{Formula["libpng"].opt_lib}/libpng.so
         -DJPEG_LIBRARY=#{Formula["jpeg-turbo"].opt_lib}/libjpeg.so
         -DZLIB_LIBRARY=#{Formula["zlib"].opt_lib}/libz.so

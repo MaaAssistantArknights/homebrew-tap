@@ -63,6 +63,12 @@ class MaaCore < Formula
       -DMAA_VERSION=v#{version}
     ]
 
+    if OS.linux?
+      cmake_args += %W[
+        -DZLIB_LIBRARY=#{Formula["zlib"].opt_lib}/libz.so
+      ]
+    end
+
     cmake_args << "-DUSE_RANGE_V3=ON" if OS.mac? && MacOS.version <= :ventura
 
     system "cmake", "-S", ".", "-B", "build", *cmake_args, *std_cmake_args

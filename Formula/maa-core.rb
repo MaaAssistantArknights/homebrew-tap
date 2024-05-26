@@ -11,10 +11,10 @@ class MaaCore < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-5.3.0"
-    sha256 arm64_sonoma: "ce7425faae7ef59b0a8475eeb6537f6c8cd2b0dbc7f8d05d375e57bc7c554c64"
-    sha256 ventura:      "9c3b9f9dc4bef9987f9115bc5576cb9b92d6905ac21391369fff1025bc592eeb"
-    sha256 x86_64_linux: "3b12f98d393208bdd185a0fba31984b2f0656c3f78f4da10105bbda2fb896a0e"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-5.3.1"
+    sha256 arm64_sonoma: "44a20277b8b9e1d728c0a52f3c88bf9338f33c8b03740ca27b3e0cbd5c784de7"
+    sha256 ventura:      "dc5f08c7f3288421c46be9fb43c6c8dd7fd1ac34c7413d5f12a701004d8449fb"
+    sha256 x86_64_linux: "15ce59944c7847fd13e020ca6319ef7287cd16190ef595f2b9e8aa2bf46250c9"
   end
 
   option "with-resource", "Install resource files" if OS.linux?

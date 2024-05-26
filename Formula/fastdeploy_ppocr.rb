@@ -12,11 +12,11 @@ class FastdeployPpocr < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/fastdeploy_ppocr-2024.3.13_2"
-    sha256 arm64_sonoma: "13db488b2af912d0b66bcded53ccc09450872aa3631fa78b2df95feec3cff432"
-    sha256 ventura:      "6bbaf751506a86e70c9c89ad985def4ac1b99791b7c21bb76dbf2e122e3cff59"
-    sha256 monterey:     "91e29be827804762a05377051671346b47020d72a178120e84f9293e25622da0"
-    sha256 x86_64_linux: "224307698e908cebf523fd60dbc3fed2d6cd0bf8bde7830413324d927914964e"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/fastdeploy_ppocr-2024.3.13_3"
+    sha256 cellar: :any,                 arm64_sonoma: "144198f09d5c0fa3f7ab2291ee78aeafa726358dbd27f7ec251f598b398829b8"
+    sha256 cellar: :any,                 ventura:      "5310a87908556a2691f9eccf6e60061285d50b4225831307041712f6ad95c7c8"
+    sha256 cellar: :any,                 monterey:     "c68268427ed8fc8bc3039c2b0a385617a66637a78a51230f96b1f4619656e6bf"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "547dd1440a3902d56e5fb2b851004378973798a9be1991b36593162382f2ddbf"
   end
 
   depends_on "cmake" => :build

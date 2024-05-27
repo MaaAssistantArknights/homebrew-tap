@@ -4,7 +4,7 @@ class MaaCore < Formula
   url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.3.1.tar.gz"
   sha256 "e98bb51d163adfd7e54a325b46a9b30bd3019d15d1d4b9cc02726617213c0921"
   license "AGPL-3.0-only"
-  revision 1
+  revision 2
 
   livecheck do
     url :url
@@ -38,6 +38,7 @@ class MaaCore < Formula
   end
 
   uses_from_macos "curl"
+  uses_from_macos "zlib"
 
   # Apple clang < 15.0.0 does not fully support std::ranges
   on_ventura :or_older do
@@ -62,12 +63,6 @@ class MaaCore < Formula
       -DWITH_EMULATOR_EXTRAS=OFF
       -DMAA_VERSION=v#{version}
     ]
-
-    if OS.linux?
-      cmake_args += %W[
-        -DZLIB_LIBRARY=#{Formula["zlib"].opt_lib}/libz.so
-      ]
-    end
 
     cmake_args << "-DUSE_RANGE_V3=ON" if OS.mac? && MacOS.version <= :ventura
 

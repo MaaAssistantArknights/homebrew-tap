@@ -5,7 +5,7 @@ class FastdeployPpocr < Formula
   version "2024.3.13"
   sha256 "ac0bf5059f0339003e3e6e50c87e9455be508761e101e8898135f67b8a7c8115"
   license "Apache-2.0"
-  revision 3
+  revision 4
 
   livecheck do
     skip "This formula is not tagged, so there is no version to check"

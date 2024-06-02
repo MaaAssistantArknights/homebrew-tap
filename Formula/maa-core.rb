@@ -4,7 +4,7 @@ class MaaCore < Formula
   url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.3.1.tar.gz"
   sha256 "e98bb51d163adfd7e54a325b46a9b30bd3019d15d1d4b9cc02726617213c0921"
   license "AGPL-3.0-only"
-  revision 2
+  revision 3
 
   livecheck do
     url :url

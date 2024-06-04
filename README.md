@@ -7,7 +7,7 @@ This is a Homebrew Tap for installing MaaAssistantArknights (MAA) related softwa
 ## 如何安装包 (How do I install these formulae and casks?)
 
 ```bash
-brew install MaaAssistantArknights/tap/<formula>`
+brew install MaaAssistantArknights/tap/<formula>
 ```
 
 or

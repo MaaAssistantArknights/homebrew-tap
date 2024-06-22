@@ -48,9 +48,6 @@ class MaaCoreBeta < Formula
 
   fails_with gcc: "11"
 
-  # Force find onnxruntime in CONFIG mode
-  patch :DATA
-
   def install
     cmake_args = %W[
       -DBUILD_SHARED_LIBS=ON
@@ -72,18 +69,3 @@ class MaaCoreBeta < Formula
     (share/"maa").install "resource" if build.with? "resource"
   end
 end
-
-__END__
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 240a7b212..81748becb 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -91,7 +91,7 @@ if(USE_MAADEPS)
-     find_package(MaaDerpLearning REQUIRED)
-     list(APPEND maa_libs MaaDerpLearning)
- else()
--    find_package(onnxruntime REQUIRED) # provided by onnxruntime>=1.16
-+    find_package(onnxruntime CONFIG REQUIRED) # provided by onnxruntime>=1.16
-     list(APPEND maa_libs onnxruntime::onnxruntime)
-     if(DEFINED fastdeploy_SOURCE_DIR)
-         # TODO: FetchContent github.com/MaaAssistantArknights/FastDeploy

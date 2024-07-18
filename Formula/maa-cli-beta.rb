@@ -4,7 +4,7 @@ class MaaCliBeta < Formula
   url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.4.8.tar.gz"
   sha256 "2ebb71420c17edec7687ce24a9e4f238ce6ad87d691c923547d46ae9cb8f4bfe"
   license "AGPL-3.0-only"
-  revision 1
+  revision 2
 
   livecheck do
     url :url
@@ -19,15 +19,14 @@ class MaaCliBeta < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux: "4f711b34cd01695b9baf1adda523320848181d2022697c11251e9fc2e5e9219c"
   end
 
-  option "without-libgit2", "Don't build with libgit2 resource updater backend"
+  option "without-git2", "Don't build with libgit2 resource updater backend"
   option "without-core-installer", "Don't build with core installer"
 
   depends_on "rust" => :build
 
-  depends_on "libgit2" => :recommended
   # openssl is always required on Linux
   # while it's only required on macOS when building with git2
-  depends_on "openssl@3" if OS.linux? || build.with?("libgit2")
+  depends_on "openssl@3" if OS.linux? || build.with?("git2")
   uses_from_macos "zlib"
 
   conflicts_with "maa-cli", { because: "both provide maa" }
@@ -39,7 +38,7 @@ class MaaCliBeta < Formula
     ENV["MAA_VERSION"] = version.to_s
 
     features = []
-    features += ["git2"] if build.with? "libgit2"
+    features += ["git2", "git2/vendored-libgit2"] if build.with? "git2"
     features += ["core_installer"] if build.with? "core-installer"
 
     system "cargo", "install", "--no-default-features",

@@ -31,6 +31,7 @@ class MaaCli < Formula
     ENV["CARGO_PROFILE_RELEASE_CODEGEN_UNITS"] = "1"
     ENV["CARGO_PROFILE_RELEASE_LTO"] = "true"
     ENV["CARGO_PROFILE_RELEASE_STRIP"] = "true"
+    ENV["MAA_VERSION"] = version.to_s
 
     features = []
     features += ["git2"] if build.with? "git2"

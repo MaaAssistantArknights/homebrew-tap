@@ -36,15 +36,7 @@ class MaaCliBeta < Formula
     ENV["CARGO_PROFILE_RELEASE_CODEGEN_UNITS"] = "1"
     ENV["CARGO_PROFILE_RELEASE_LTO"] = "true"
     ENV["CARGO_PROFILE_RELEASE_STRIP"] = "true"
-
-    # patch version
-    inreplace "maa-cli/Cargo.toml" do |s|
-      s.sub!(/(version\s*=\s*)"[^"]+"/, "version = \"#{version}\"")
-    end
-    inreplace "Cargo.lock" do |s|
-      s.sub!(/name\s*=\s*"maa-cli"\s*\n\s*version\s*=\s*"[^"]+"/,
-        "name = \"maa-cli\"\nversion = \"#{version}\"")
-    end
+    ENV["MAA_VERSION"] = version.to_s
 
     features = []
     features += ["git2"] if build.with? "git2"

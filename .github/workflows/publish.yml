@@ -47,13 +47,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh pr checkout ${{ github.event.pull_request.number }}
 
-      - name: Setup Credentials
+      - name: Setup Git Credentials
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
         env:
           TOKEN: ${{ github.token }}
-        run: >
-          git config --local http.https://github.com/.extraheader
-            "AUTHORIZATION: basic $(echo -n "x-access-token:$TOKEN" | base64)"
+        run: |
+          credentials=$(echo -n "x-access-token:${GITHUB_TOKEN}" | base64)
+          git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ${credentials}"
 
       - name: Pull and Publish Bottles
         env:

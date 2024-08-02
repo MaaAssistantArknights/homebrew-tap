@@ -47,6 +47,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh pr checkout ${{ github.event.pull_request.number }}
 
+      - name: Setup Credentials
+        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
+        env:
+          TOKEN: ${{ github.token }}
+        run: >
+          git config --local http.https://github.com/.extraheader
+            "AUTHORIZATION: basic $(echo -n "x-access-token:$TOKEN" | base64)"
+
       - name: Pull and Publish Bottles
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ github.token }}
@@ -62,14 +70,6 @@ jobs:
             --tap="$GITHUB_REPOSITORY" \
             --workflows ci.yml \
             '${{ github.event.pull_request.number }}'
-
-      - name: Setup Credentials
-        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
-        env:
-          TOKEN: ${{ github.token }}
-        run: >
-          git config --local http.https://github.com/.extraheader
-            "AUTHORIZATION: basic $(echo -n "x-access-token:$TOKEN" | base64)"
 
       - name: Push commits to PR branch
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}

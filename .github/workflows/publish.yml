@@ -63,6 +63,13 @@ jobs:
             --workflows ci.yml \
             '${{ github.event.pull_request.number }}'
 
+      - name: Setup Credentials
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          credentials=$(echo -n "x-access-token:$TOKEN " | base64)
+          git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ${credentials}"
+
       - name: Push commits to PR branch
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
         run: |

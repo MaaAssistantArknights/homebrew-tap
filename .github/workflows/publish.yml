@@ -68,7 +68,7 @@ jobs:
         with:
           token: ${{ github.token }}
           branch: ${{ github.event.pull_request.head.ref }}
-          remote: ${{ github.event.pull_request.head.repo.head.repo.full_name }}
+          remote: ${{ github.event.pull_request.head.repo.clone_url }}
           directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
 
       - name: Wait for Remote Branch to be Updated

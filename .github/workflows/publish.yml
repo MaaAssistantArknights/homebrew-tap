@@ -63,12 +63,10 @@ jobs:
             --workflows ci.yml \
             '${{ github.event.pull_request.number }}'
 
-      - name: Push commits
-        uses: Homebrew/actions/git-try-push@master
-        with:
-          token: ${{ github.token }}
-          branch: ${{ github.event.pull_request.head.ref }}
-          directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
+      - name: Push commits to PR branch
+        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
+        run: |
+          git push origin HEAD
 
       - name: Wait for Remote Branch to be Updated
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}

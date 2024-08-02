@@ -11,7 +11,7 @@ jobs:
     container:
       image: ghcr.io/homebrew/ubuntu22.04:master
     permissions:
-      actions: read
+      actions: write
       pull-requests: write
       contents: write
       packages: write

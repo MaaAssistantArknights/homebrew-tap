@@ -114,8 +114,3 @@ jobs:
           gh pr merge '${{ github.event.pull_request.number }}' \
             --merge \
             --delete-branch
-
-      - name: Delete credentials
-        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
-        run: |
-          git config --local --unset http.

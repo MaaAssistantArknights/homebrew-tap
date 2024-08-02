@@ -47,12 +47,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh pr checkout ${{ github.event.pull_request.number }}
 
-      - name: Setup Git Credentials
-        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
-        run: |
-          credentials=$(echo -n "x-access-token:${GITHUB_TOKEN}" | base64)
-          git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ${credentials}"
-
       - name: Pull and Publish Bottles
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ github.token }}
@@ -70,9 +64,12 @@ jobs:
             '${{ github.event.pull_request.number }}'
 
       - name: Push commits to PR branch
-        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
-        run: |
-          git push origin HEAD
+        uses: Homebrew/actions/git-try-push@master
+        with:
+          token: ${{ github.token }}
+          branch: ${{ github.event.pull_request.head.ref }}
+          remote: ${{ github.event.pull_request.head.repo.head.repo.full_name }}
+          directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
 
       - name: Wait for Remote Branch to be Updated
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}

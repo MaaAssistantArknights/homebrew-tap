@@ -64,11 +64,12 @@ jobs:
             '${{ github.event.pull_request.number }}'
 
       - name: Setup Credentials
+        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
         env:
           TOKEN: ${{ github.token }}
-        run: |
-          credentials=$(echo -n "x-access-token:$TOKEN " | base64)
-          git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ${credentials}"
+        run: >
+          git config --local http.https://github.com/.extraheader
+            "AUTHORIZATION: basic $(echo -n "x-access-token:$TOKEN" | base64)"
 
       - name: Push commits to PR branch
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
@@ -118,3 +119,8 @@ jobs:
           gh pr merge '${{ github.event.pull_request.number }}' \
             --merge \
             --delete-branch
+
+      - name: Delete credentials
+        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
+        run: |
+          git config --local --unset http.

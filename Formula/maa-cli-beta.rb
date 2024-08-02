@@ -1,10 +1,9 @@
 class MaaCliBeta < Formula
   desc "Command-line tool for MAA (MaaAssistantArknights)"
   homepage "https://github.com/MaaAssistantArknights/maa-cli/"
-  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.4.8.tar.gz"
-  sha256 "2ebb71420c17edec7687ce24a9e4f238ce6ad87d691c923547d46ae9cb8f4bfe"
+  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.4.9-beta.1.tar.gz"
+  sha256 "8240790d4e4a1019b28b78206308a09673c1dd1b7b5097c63363cc2c0dc9a116"
   license "AGPL-3.0-only"
-  revision 2
 
   livecheck do
     url :url

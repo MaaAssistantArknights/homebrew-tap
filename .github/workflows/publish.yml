@@ -49,8 +49,6 @@ jobs:
 
       - name: Setup Git Credentials
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
-        env:
-          TOKEN: ${{ github.token }}
         run: |
           credentials=$(echo -n "x-access-token:${GITHUB_TOKEN}" | base64)
           git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ${credentials}"

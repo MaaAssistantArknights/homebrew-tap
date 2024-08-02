@@ -39,6 +39,12 @@ jobs:
         with:
           username: github-actions[bot]
 
+      - name: Checkout PR Branch
+        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr checkout ${{ github.event.pull_request.number }}
+
       - name: Pull and Publish Bottles
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ github.token }}
@@ -48,21 +54,60 @@ jobs:
         run: |
           brew pr-pull \
             --debug \
+            --clean \
+            --no-cherry-pick \
             --artifact-pattern 'bottles_*' \
             --tap="$GITHUB_REPOSITORY" \
             --workflows ci.yml \
             '${{ github.event.pull_request.number }}'
 
-      - name: Push Commits to Main
+      - name: Push commits
         uses: Homebrew/actions/git-try-push@master
         with:
           token: ${{ github.token }}
-          branch: main
+          branch: ${{ github.event.pull_request.head.ref }}
           directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
 
-      - name: Delete PR Branch if Not Fork
-        if: github.event.pull_request.head.repo.fork == false
+      - name: Wait for Remote Branch to be Updated
+        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
+        run: |
+          local_head=$(git rev-parse HEAD)
+          remote_ref='pull/${{ github.event.pull_request.number }}/head'
+
+          attempt=0
+          max_attempts=10
+          timeout=1
+
+          # Wait (with exponential backoff) until the PR branch is in sync
+          while [[ "$attempt" -lt "$max_attempts" ]]; do
+            remote_head="$(git ls-remote origin "$remote_ref" | cut -f1)"
+            if [[ "$local_head" = "$remote_head" ]]
+            then
+              success=1
+              break
+            fi
+            sleep "$timeout"
+            attempt=$(( attempt + 1 ))
+            timeout=$(( timeout * 2 ))
+          done
+
+          if [[ "$success" -ne 1 ]]; then
+            echo "Remote branch not updated after ${max_attempts} attempts"
+            exit 1
+          fi
+
+      - name: Approve Pull Request
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
         env:
-          BRANCH: ${{ github.event.pull_request.head.ref }}
-        run: git push --delete origin "$BRANCH"
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr review '${{ github.event.pull_request.number }}' --approve
+
+      - name: Enable Auto Merge
+        working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr merge '${{ github.event.pull_request.number }}' \
+            --merge \
+            --delete-branch

@@ -4,6 +4,10 @@ on:
     types:
       - labeled
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   pr-pull:
     if: contains(github.event.pull_request.labels.*.name, 'Automerge')

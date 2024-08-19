@@ -25,7 +25,6 @@ class MaaCoreBeta < Formula
 
   depends_on "cpr"
   depends_on "fastdeploy_ppocr"
-  depends_on macos: :ventura # upstream only compiles on macOS 13
   depends_on "onnxruntime"
 
   # opencv is a very large dependency, and we only need a small part of it
@@ -39,14 +38,15 @@ class MaaCoreBeta < Formula
   uses_from_macos "curl"
   uses_from_macos "zlib"
 
-  # Apple clang < 15.0.0 does not fully support std::ranges
   on_ventura :or_older do
-    depends_on "range-v3" => :build
+    depends_on "llvm"
   end
 
   conflicts_with "maa-core", { because: "both provide libMaaCore" }
 
   fails_with gcc: "11"
+
+  patch :DATA
 
   def install
     cmake_args = %W[
@@ -60,7 +60,13 @@ class MaaCoreBeta < Formula
       -DMAA_VERSION=v#{version}
     ]
 
-    cmake_args << "-DUSE_RANGE_V3=ON" if OS.mac? && MacOS.version <= :ventura
+    if OS.mac? && MacOS.version <= :ventura
+      # Force building with llvm clang on ventura or older
+      cmake_args << "-DCMAKE_C_COMPILER=#{Formula["llvm"].opt_bin}/clang"
+      cmake_args << "-DCMAKE_CXX_COMPILER=#{Formula["llvm"].opt_bin}/clang++"
+      # Force link to libc++ of llvm
+      cmake_args << "-DLIBCXX_PATH=#{Formula["llvm"].opt_prefix}/lib/c++"
+    end
 
     system "cmake", "-S", ".", "-B", "build", *cmake_args, *std_cmake_args
     system "cmake", "--build", "build"
@@ -69,3 +75,24 @@ class MaaCoreBeta < Formula
     (share/"maa").install "resource" if build.with? "resource"
   end
 end
+
+__END__
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 47d60c60e..608f98db0 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -53,6 +53,14 @@ else ()
+     endif ()
+ endif ()
+
++# When building with llvm clang, we need to link to libc++ of llvm explicitly
++# References:
++# https://github.com/Homebrew/homebrew-core/issues/169820
++# https://github.com/llvm/llvm-project/issues/77653
++if (DEFINED LIBCXX_PATH)
++    target_link_options(MaaCore PRIVATE "-L${LIBCXX_PATH}")
++endif ()
++
+ if (WIN32)
+     #注意：相比VS版本缺少了 -D_CONSOLE -D_WINDLL 两项
+     target_compile_definitions(MaaCore PRIVATE ASST_DLL_EXPORTS _UNICODE UNICODE)

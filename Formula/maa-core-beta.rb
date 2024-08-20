@@ -4,6 +4,7 @@ class MaaCoreBeta < Formula
   url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.6.0-beta.1.tar.gz"
   sha256 "c5713197390d0c3394a550e4885570c99a0768d0df106618760fa3d78c2a1f60"
   license "AGPL-3.0-only"
+  revision 1
 
   livecheck do
     url :url
@@ -11,11 +12,11 @@ class MaaCoreBeta < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-beta-5.6.0-beta.1"
-    sha256 cellar: :any,                 arm64_sonoma: "b08d3588ce73200974b9c6963dc744798915e8cdf143af7fecadf56f1646b6e5"
-    sha256 cellar: :any,                 ventura:      "6c645e4dbaf1bbec4f145cc35186635f40d05ea1fbdc43e74c1efcef8b7f51aa"
-    sha256 cellar: :any,                 monterey:     "6755b65bddeab12f397b6437e2afc6f8db690d93e92ff86febc525c8af0d230e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "8fecd3387cc47d55f290d83f840280177bdba5adbb6a3093921b3cb9981e9a9e"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-beta-5.6.0-beta.1_1"
+    sha256 cellar: :any,                 arm64_sonoma: "c3d91f5502b137f26289c7f74bef9181cf63901f7923d3ea675a8926d199854f"
+    sha256 cellar: :any,                 ventura:      "78de0f49e19ffa274b9c265d541c8846396a34f04773f42ba00d7b69eee16910"
+    sha256 cellar: :any,                 monterey:     "f5646571fd077a0c4045215ab47696aacb6a02da65a80fc08b8ba735632ceca2"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "7efd2133fcd138e23a8051681a343d2c124255a290d1a7cfe892eb550e4030f5"
   end
 
   option "with-resource", "Install resource files" if OS.linux?
@@ -47,8 +48,6 @@ class MaaCoreBeta < Formula
 
   fails_with gcc: "11"
 
-  patch :DATA
-
   def install
     cmake_args = %W[
       -DBUILD_SHARED_LIBS=ON
@@ -62,11 +61,11 @@ class MaaCoreBeta < Formula
     ]
 
     if OS.mac? && MacOS.version <= :ventura
-      # Force building with llvm clang on ventura or older
+      # Force building with llvm clang
       cmake_args << "-DCMAKE_C_COMPILER=#{Formula["llvm"].opt_bin}/clang"
       cmake_args << "-DCMAKE_CXX_COMPILER=#{Formula["llvm"].opt_bin}/clang++"
-      # Force link to libc++ of llvm
-      cmake_args << "-DLIBCXX_PATH=#{Formula["llvm"].opt_prefix}/lib/c++"
+      # Force using llvm libc++
+      ENV.append "LDFLAGS", "-L#{Formula["llvm"].opt_prefix}/lib/c++"
     end
 
     system "cmake", "-S", ".", "-B", "build", *cmake_args, *std_cmake_args
@@ -76,24 +75,3 @@ class MaaCoreBeta < Formula
     (share/"maa").install "resource" if build.with? "resource"
   end
 end
-
-__END__
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 47d60c60e..608f98db0 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -53,6 +53,14 @@ else ()
-     endif ()
- endif ()
-
-+# When building with llvm clang, we need to link to libc++ of llvm explicitly
-+# References:
-+# https://github.com/Homebrew/homebrew-core/issues/169820
-+# https://github.com/llvm/llvm-project/issues/77653
-+if (DEFINED LIBCXX_PATH)
-+    target_link_options(MaaCore PRIVATE "-L${LIBCXX_PATH}")
-+endif ()
-+
- if (WIN32)
-     #注意：相比VS版本缺少了 -D_CONSOLE -D_WINDLL 两项
-     target_compile_definitions(MaaCore PRIVATE ASST_DLL_EXPORTS _UNICODE UNICODE)

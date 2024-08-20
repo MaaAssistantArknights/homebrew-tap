@@ -4,6 +4,7 @@ class MaaCoreBeta < Formula
   url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.6.0-beta.1.tar.gz"
   sha256 "c5713197390d0c3394a550e4885570c99a0768d0df106618760fa3d78c2a1f60"
   license "AGPL-3.0-only"
+  revision 1
 
   livecheck do
     url :url
@@ -47,8 +48,6 @@ class MaaCoreBeta < Formula
 
   fails_with gcc: "11"
 
-  patch :DATA
-
   def install
     cmake_args = %W[
       -DBUILD_SHARED_LIBS=ON
@@ -62,11 +61,11 @@ class MaaCoreBeta < Formula
     ]
 
     if OS.mac? && MacOS.version <= :ventura
-      # Force building with llvm clang on ventura or older
+      # Force building with llvm clang
       cmake_args << "-DCMAKE_C_COMPILER=#{Formula["llvm"].opt_bin}/clang"
       cmake_args << "-DCMAKE_CXX_COMPILER=#{Formula["llvm"].opt_bin}/clang++"
-      # Force link to libc++ of llvm
-      cmake_args << "-DLIBCXX_PATH=#{Formula["llvm"].opt_prefix}/lib/c++"
+      # Force using llvm libc++
+      ENV.append "LDFLAGS", "-L#{Formula["llvm"].opt_prefix}/lib/c++"
     end
 
     system "cmake", "-S", ".", "-B", "build", *cmake_args, *std_cmake_args
@@ -76,24 +75,3 @@ class MaaCoreBeta < Formula
     (share/"maa").install "resource" if build.with? "resource"
   end
 end
-
-__END__
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 47d60c60e..608f98db0 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -53,6 +53,14 @@ else ()
-     endif ()
- endif ()
-
-+# When building with llvm clang, we need to link to libc++ of llvm explicitly
-+# References:
-+# https://github.com/Homebrew/homebrew-core/issues/169820
-+# https://github.com/llvm/llvm-project/issues/77653
-+if (DEFINED LIBCXX_PATH)
-+    target_link_options(MaaCore PRIVATE "-L${LIBCXX_PATH}")
-+endif ()
-+
- if (WIN32)
-     #注意：相比VS版本缺少了 -D_CONSOLE -D_WINDLL 两项
-     target_compile_definitions(MaaCore PRIVATE ASST_DLL_EXPORTS _UNICODE UNICODE)

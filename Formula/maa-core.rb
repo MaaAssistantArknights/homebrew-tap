@@ -25,7 +25,6 @@ class MaaCore < Formula
 
   depends_on "cpr"
   depends_on "fastdeploy_ppocr"
-  depends_on macos: :ventura # upstream only compiles on macOS 13
   depends_on "onnxruntime"
 
   # opencv is a very large dependency, and we only need a small part of it
@@ -39,9 +38,8 @@ class MaaCore < Formula
   uses_from_macos "curl"
   uses_from_macos "zlib"
 
-  # Apple clang < 15.0.0 does not fully support std::ranges
   on_ventura :or_older do
-    depends_on "range-v3" => :build
+    depends_on "llvm"
   end
 
   conflicts_with "maa-core-beta", { because: "both provide libMaaCore" }
@@ -60,7 +58,13 @@ class MaaCore < Formula
       -DMAA_VERSION=v#{version}
     ]
 
-    cmake_args << "-DUSE_RANGE_V3=ON" if OS.mac? && MacOS.version <= :ventura
+    if OS.mac? && MacOS.version <= :ventura
+      # Force building with llvm clang
+      cmake_args << "-DCMAKE_C_COMPILER=#{Formula["llvm"].opt_bin}/clang"
+      cmake_args << "-DCMAKE_CXX_COMPILER=#{Formula["llvm"].opt_bin}/clang++"
+      # Force using llvm libc++
+      ENV.append "LDFLAGS", "-L#{Formula["llvm"].opt_prefix}/lib/c++"
+    end
 
     system "cmake", "-S", ".", "-B", "build", *cmake_args, *std_cmake_args
     system "cmake", "--build", "build"

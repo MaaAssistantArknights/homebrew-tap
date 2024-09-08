@@ -1,8 +1,8 @@
 class MaaCore < Formula
   desc "Maa Arknights assistant Library"
   homepage "https://github.com/MaaAssistantArknights/MaaAssistantArknights/"
-  url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.5.11452.tar.gz"
-  sha256 "74e79e7b50d8e4d9750425a4ff9c3a66f4c62abb3206680b7c22fea17a23bf63"
+  url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.6.0.tar.gz"
+  sha256 "c8e5953debf34cd9a74cba628263fe93f9142dc2c46e2643c06d31bc1eedfebe"
   license "AGPL-3.0-only"
 
   livecheck do
@@ -11,10 +11,11 @@ class MaaCore < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-5.5.11452"
-    sha256 cellar: :any,                 arm64_sonoma: "8f823e3c8ea9fb657b8afec710fb46d84b30a351bc2125675a7561991b320546"
-    sha256 cellar: :any,                 ventura:      "fc54a277d0ad5d4aaf6064993e02c35c499290cf73f3411c563ab8e30a1412c8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "145dfcc1c8bb002820a762fa7e19bc5a6dd5052bbaf5d65b529e8b64166da946"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-5.6.0"
+    sha256 cellar: :any,                 arm64_sonoma: "1b1a7d46fa726620352db6c91bc094aa4a27204bb89aad65ba161c3b15a2b023"
+    sha256 cellar: :any,                 ventura:      "070777d39c0f5594b05f8d749a2abf1d14cf2f89baa01d19f87ddd3143f7b25d"
+    sha256 cellar: :any,                 monterey:     "e57f02da6f96945055310344706f71b41cd06c1651afab43f5711e08dd7dbea2"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "72e8ab1677ba428b455c482989c01247097958aab8c180a166266e1bcd8d4a2f"
   end
 
   option "with-resource", "Install resource files" if OS.linux?
@@ -25,7 +26,6 @@ class MaaCore < Formula
 
   depends_on "cpr"
   depends_on "fastdeploy_ppocr"
-  depends_on macos: :ventura # upstream only compiles on macOS 13
   depends_on "onnxruntime"
 
   # opencv is a very large dependency, and we only need a small part of it
@@ -39,9 +39,8 @@ class MaaCore < Formula
   uses_from_macos "curl"
   uses_from_macos "zlib"
 
-  # Apple clang < 15.0.0 does not fully support std::ranges
   on_ventura :or_older do
-    depends_on "range-v3" => :build
+    depends_on "llvm"
   end
 
   conflicts_with "maa-core-beta", { because: "both provide libMaaCore" }
@@ -60,7 +59,13 @@ class MaaCore < Formula
       -DMAA_VERSION=v#{version}
     ]
 
-    cmake_args << "-DUSE_RANGE_V3=ON" if OS.mac? && MacOS.version <= :ventura
+    if OS.mac? && MacOS.version <= :ventura
+      # Force building with llvm clang
+      cmake_args << "-DCMAKE_C_COMPILER=#{Formula["llvm"].opt_bin}/clang"
+      cmake_args << "-DCMAKE_CXX_COMPILER=#{Formula["llvm"].opt_bin}/clang++"
+      # Force using llvm libc++
+      ENV.append "LDFLAGS", "-L#{Formula["llvm"].opt_prefix}/lib/c++"
+    end
 
     system "cmake", "-S", ".", "-B", "build", *cmake_args, *std_cmake_args
     system "cmake", "--build", "build"

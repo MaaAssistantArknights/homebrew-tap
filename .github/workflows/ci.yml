@@ -16,6 +16,7 @@ jobs:
           - ubuntu-22.04
           - macos-13
           - macos-14 # aarch64
+          - macos-15 # aarch64
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew

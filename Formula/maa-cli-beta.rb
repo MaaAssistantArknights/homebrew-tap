@@ -1,8 +1,8 @@
 class MaaCliBeta < Formula
   desc "Command-line tool for MAA (MaaAssistantArknights)"
   homepage "https://github.com/MaaAssistantArknights/maa-cli/"
-  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.5.0-beta.2.tar.gz"
-  sha256 "2c034559a381a285cee892a27c0130cba04375d28e4919a019d1f97767eed225"
+  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.5.0-beta.3.tar.gz"
+  sha256 "8d66b24489c783ecb0492d295d78f6f007b5826054bf9763c04c682a56437008"
   license "AGPL-3.0-only"
 
   livecheck do
@@ -11,10 +11,10 @@ class MaaCliBeta < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-cli-beta-0.5.0-beta.2"
-    sha256 cellar: :any,                 arm64_sonoma: "cd9bca72840c3a3031d678cdd38aceec4b0a2e54e86c867789c0f549838254f2"
-    sha256 cellar: :any,                 ventura:      "f88333c57083ebe570606325aaa7af75a5568de886c421d1cd412e52b4605225"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "80437fa58d9ff9137e3793548f415f5cced39fc1a81ca383259184666a07314a"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-cli-beta-0.5.0-beta.3"
+    sha256 cellar: :any,                 arm64_sonoma: "1a90d017632c865dfee8b854e262fc7af410d2d59dfc2fa819b9bd240291d9bd"
+    sha256 cellar: :any,                 ventura:      "2825ebc5f231b37f735b90a40fd791ebf350dda2a1fd6415812b457b9ca2dab9"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "ead0e0ca8089494f834f108f60a7919af18d31dd17997865f6f4c7732733550e"
   end
 
   option "without-git2", "Don't build with libgit2 resource updater backend"

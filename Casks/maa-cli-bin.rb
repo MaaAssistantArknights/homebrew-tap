@@ -1,6 +1,6 @@
 cask "maa-cli-bin" do
-  version "0.4.12"
-  sha256 "45a2b41a4b171c9023e7eb3f0172e7332c0bf0db8a6313e2c51ccdb420ff3b64"
+  version "0.5.0"
+  sha256 "b370bd2f0b5353abe14993719570c64986661105bc95b8e2986f9effd08c2e2e"
 
   url "https://github.com/MaaAssistantArknights/maa-cli/releases/download/v#{version}/maa_cli-v#{version}-universal-apple-darwin.zip"
   name "maa-cli"

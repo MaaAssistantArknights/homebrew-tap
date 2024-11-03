@@ -63,4 +63,8 @@ Due to the limitation of Homebrew and GitHub Action runner, we only provide preb
 
 ## 开发者指引 (Developer guide)
 
-CI 提供了自动化的构建和发布功能，当你添加或者更新了一个 Formula 或者 Cask 时，提交 PR 后 CI 会自动测试并构建对应的 bottle。当构建成功后，你可以向 PR 添加 `pr-pull` 标签，CI 会自动将该 PR 合并到 `main` 分支并将 bottle 发布到 GitHub Release 同时更新 Formula 内 bottle 的内容。注意，对于 Formula，你必须在 PR 中添加 `pr-pull` 标签才能使 CI 自动合并并上传 bottle，否则你需要手动上传 bottle 并更新 Formula 内 bottle 的内容。
+CI 提供了自动化的构建和发布功能，当你添加或者更新了一个 Formula 并提交 PR 后 CI 会自动测试并构建对应的 bottle。
+当构建成功后，你可以向 PR 添加 `Automerge` 标签，CI 会自动将 PR 合并到 `main` 分支，发布 bottle 到 GitHub Release 并更新 Formula 内 bottle 的内容。
+注意，请不要直接通过 Github 的 Merge 按钮合并 PR，否则 CI 无法自动发布 bottle。
+
+对于 Cask，由于不需要构建，请直接通过 Merge 按钮合并 PR。对于 Cask 推荐使用 Squash and Merge 功能以减少历史记录。

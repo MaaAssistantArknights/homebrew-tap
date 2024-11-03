@@ -5,6 +5,11 @@ class MaaCli < Formula
   sha256 "f9d59f66b4823cdebe8d98399d5c20c72085038ae8d4434000900bf74a3d2aeb"
   license "AGPL-3.0-only"
 
+  livecheck do
+    url :stable
+    regex(/^v?(\d+\.\d+\.\d+)$/i)
+  end
+
   bottle do
     root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-cli-0.5.1"
     sha256 cellar: :any,                 arm64_sequoia: "c42c25d7b5cd14b7d49082223b0d1a9c3aa4c21d3381ea84d584922bf0a71493"

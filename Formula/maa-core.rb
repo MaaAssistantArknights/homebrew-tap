@@ -6,7 +6,7 @@ class MaaCore < Formula
   license "AGPL-3.0-only"
 
   livecheck do
-    url :url
+    url :stable
     regex(/^v?(\d+\.\d+\.\d+)$/i)
   end
 

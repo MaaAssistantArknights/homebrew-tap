@@ -4,7 +4,7 @@ class OpencvMaa < Formula
   url "https://github.com/opencv/opencv/archive/refs/tags/4.10.0.tar.gz"
   sha256 "b2171af5be6b26f7a06b1229948bbb2bdaa74fcf5cd097e0af6378fce50a6eb9"
   license "Apache-2.0"
-  revision 1
+  revision 2
 
   livecheck do
     url :stable
@@ -12,11 +12,11 @@ class OpencvMaa < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/opencv-maa-4.10.0_1"
-    sha256 arm64_sonoma: "3bdafd8b170ee01d55564087ea70d60c9b4445fa2c5289a86242041a0c53105b"
-    sha256 ventura:      "5b7ee96cb37d1709862f6338d54041f6eb0e71a45c168423eeafe4e9346b0f05"
-    sha256 monterey:     "a9c6e2e9891138e9ef70f1077ec11504894da4894c874e4734c4c395916f0e30"
-    sha256 x86_64_linux: "9c8e86ffc5d4e1e59eaebba39bce9f713632a13f4047f0dbb22cbac08dba1b67"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/opencv-maa-4.10.0_2"
+    sha256 arm64_sequoia: "7ed9c5aeb5a54440a883296d3498abe47ff03857a03611a71af6eedb01ec2e7d"
+    sha256 arm64_sonoma:  "f0d65d510f6c746edf19330dd97b3535959c65696411ac43e19aaa4ac0565529"
+    sha256 ventura:       "fd46332f66178c6e31ba10651498a3aade4d716a7b7d56cd708ec4ab4bd92577"
+    sha256 x86_64_linux:  "b325a9960fd077871195bac1480f0df01eab547b99ce67317f6b14e8a9667f39"
   end
 
   depends_on "cmake" => :build

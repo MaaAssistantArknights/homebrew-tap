@@ -1,22 +1,21 @@
 class FastdeployPpocr < Formula
   desc "Stripped-down version of PaddlePaddle/FastDeploy"
   homepage "https://github.com/MaaAssistantArknights/FastDeploy"
-  url "https://github.com/MaaAssistantArknights/FastDeploy/archive/0db6000aaac250824266ac37451f43ce272d80a3.tar.gz"
-  version "2024.3.13"
-  sha256 "ac0bf5059f0339003e3e6e50c87e9455be508761e101e8898135f67b8a7c8115"
+  url "https://github.com/MaaAssistantArknights/FastDeploy/archive/2896b6d3641c18218209c496ea149a773373fa8b.tar.gz"
+  version "2024.5.30"
+  sha256 "5ee3dbad183b56ebf42569497c58a646d069a92fef54afce108d1e3422bb03f9"
   license "Apache-2.0"
-  revision 4
 
   livecheck do
     skip "This formula is not tagged, so there is no version to check"
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/fastdeploy_ppocr-2024.3.13_4"
-    sha256 cellar: :any,                 arm64_sonoma: "5613edd926f12ddaeac926267e1c033604445e1b15978f7dfe2e7e7c367fab03"
-    sha256 cellar: :any,                 ventura:      "656ff6dcfe3efc1593cbe0be61199946b8b241bcc7dddc439b9ee79227f8f6e9"
-    sha256 cellar: :any,                 monterey:     "6fbe04bea3180010501f575278475975071bb099d63392af5859436db6d15b27"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "702b0ce254243fa73bec70d1300264e8e56dafcfcacab24d35357773d33c65d5"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/fastdeploy_ppocr-2024.5.30"
+    sha256 cellar: :any,                 arm64_sequoia: "4e6ac1b029b585a09f443e8dbc32c20a2fbb25594eb3fc27121c692de6a504bf"
+    sha256 cellar: :any,                 arm64_sonoma:  "5212728e9a6bf4055cb4936ca71e0253707ab7a614180a6636ca5949b0586fc3"
+    sha256 cellar: :any,                 ventura:       "d564b4297039df5bf61a47999a2dbb3123408b175133dfc838ad4e4e005ca183"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c297428837c68cc79e2b94f6643c50e42838b2ca53e964b3d7ea0eab085319b2"
   end
 
   depends_on "cmake" => :build

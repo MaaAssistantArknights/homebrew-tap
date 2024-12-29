@@ -1,8 +1,8 @@
 class MaaCli < Formula
   desc "Command-line tool for MAA (MaaAssistantArknights)"
   homepage "https://github.com/MaaAssistantArknights/maa-cli/"
-  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.5.2.tar.gz"
-  sha256 "b9d944575a08decf14ec96ee5fdefa002f906397849452e31108d2a2e44b7d7f"
+  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.5.3.tar.gz"
+  sha256 "e78200bd58e8481e81bd2daf996a65170864d761d1db88c637db38c33df2b29c"
   license "AGPL-3.0-only"
 
   livecheck do
@@ -41,9 +41,11 @@ class MaaCli < Formula
     features += ["git2", "git2/vendored-libgit2"] if build.with? "git2"
     features += ["core_installer"] if build.with? "core-installer"
 
+    package_path = "crates/maa-cli"
+
     system "cargo", "install", "--no-default-features",
-      "--features", features.join(","), *std_cargo_args(path: "maa-cli")
-    fish_completion.install "maa-cli/completions/maa.fish"
+      "--features", features.join(","), *std_cargo_args(path: package_path)
+    fish_completion.install "#{package_path}/completions/maa.fish"
   end
 
   test do

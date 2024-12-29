@@ -43,7 +43,7 @@ class MaaCli < Formula
 
     system "cargo", "install", "--no-default-features",
       "--features", features.join(","), *std_cargo_args(path: "maa-cli")
-    fish_completion.install "maa-cli/completions/maa.fish"
+    fish_completion.install "crates/maa-cli/completions/maa.fish"
   end
 
   test do

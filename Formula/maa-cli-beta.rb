@@ -1,8 +1,8 @@
 class MaaCliBeta < Formula
   desc "Command-line tool for MAA (MaaAssistantArknights)"
   homepage "https://github.com/MaaAssistantArknights/maa-cli/"
-  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.5.2.tar.gz"
-  sha256 "b9d944575a08decf14ec96ee5fdefa002f906397849452e31108d2a2e44b7d7f"
+  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.5.3.tar.gz"
+  sha256 "e78200bd58e8481e81bd2daf996a65170864d761d1db88c637db38c33df2b29c"
   license "AGPL-3.0-only"
 
   livecheck do
@@ -11,11 +11,11 @@ class MaaCliBeta < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-cli-beta-0.5.2"
-    sha256 cellar: :any,                 arm64_sequoia: "d76a6b600c4e972e71c84237879f4b60ef091685399b457f7ec4561772988f16"
-    sha256 cellar: :any,                 arm64_sonoma:  "32e07836d8925a4f7fae9ef06771ac46337770784d17dee6a327103fd670364d"
-    sha256 cellar: :any,                 ventura:       "07cfd7a517e7b1cf0042e99053d8c225a1a43367595a4f9848d72a611bac5944"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "17cf74cd3d208aa00094c8d4de36e70f104a73c1888fc9c91b1df12c4e75da21"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-cli-beta-0.5.3"
+    sha256 cellar: :any,                 arm64_sequoia: "fd904e9bf4f4dcfde67eec8a691e910462d279f97ce87c52a5afbf3bd60a576a"
+    sha256 cellar: :any,                 arm64_sonoma:  "8fe73ee04b468909e1b903976f57cef34ffa06eaa9cd88cb28fe11a8027f7ecf"
+    sha256 cellar: :any,                 ventura:       "d4f4cd1b7fbb79c633ba00138f7a5735b3827cb1bbefb681c5a7d3873bf8d442"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fcd0c7723a2f30399957f1291a9072bbec38ff9114c9d06bc31556cadebe4777"
   end
 
   option "without-git2", "Don't build with libgit2 resource updater backend"
@@ -40,9 +40,11 @@ class MaaCliBeta < Formula
     features += ["git2", "git2/vendored-libgit2"] if build.with? "git2"
     features += ["core_installer"] if build.with? "core-installer"
 
+    package_path = "crates/maa-cli"
+
     system "cargo", "install", "--no-default-features",
-      "--features", features.join(","), *std_cargo_args(path: "maa-cli")
-    fish_completion.install "maa-cli/completions/maa.fish"
+      "--features", features.join(","), *std_cargo_args(path: package_path)
+    fish_completion.install "#{package_path}/completions/maa.fish"
   end
 
   test do

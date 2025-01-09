@@ -12,11 +12,11 @@ class FastdeployPpocr < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/fastdeploy_ppocr-2024.5.30"
-    sha256 cellar: :any,                 arm64_sequoia: "4e6ac1b029b585a09f443e8dbc32c20a2fbb25594eb3fc27121c692de6a504bf"
-    sha256 cellar: :any,                 arm64_sonoma:  "5212728e9a6bf4055cb4936ca71e0253707ab7a614180a6636ca5949b0586fc3"
-    sha256 cellar: :any,                 ventura:       "d564b4297039df5bf61a47999a2dbb3123408b175133dfc838ad4e4e005ca183"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c297428837c68cc79e2b94f6643c50e42838b2ca53e964b3d7ea0eab085319b2"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/fastdeploy_ppocr-2024.5.30_1"
+    sha256 cellar: :any,                 arm64_sequoia: "ca519100e0e4f703db74244b03cd5d246a3336066bf7ae46217ecf325f8ebb99"
+    sha256 cellar: :any,                 arm64_sonoma:  "4e7c7eddd21e887eb0c249de0edb872131dd6909c076f6b4d73ac97b244c9964"
+    sha256 cellar: :any,                 ventura:       "e1449f168adc183b3c0b1c540a9fb1fda8bcf1cc824b3d8ae056782a9eb8137b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5465189517c0fcee48cb48711c8c3f04ab951bf9182e053be0e81c84d8453490"
   end
 
   depends_on "cmake" => :build

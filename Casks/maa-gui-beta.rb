@@ -1,6 +1,6 @@
 cask "maa-gui-beta" do
-  version "5.15.6"
-  sha256 "3a175a86932e2ba6384ba93635b343eb954b5cce995508d4a45725d0f2b096ea"
+  version "5.16.0-beta.1"
+  sha256 "7aceac854a94a64173b367921b34f6537c55312883602048889a830393c2d35e"
 
   url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/releases/download/v#{version}/MAA-v#{version}-macos-universal.dmg",
       verified: "github.com/MaaAssistantArknights/MaaAssistantArknights/"

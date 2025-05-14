@@ -6,16 +6,6 @@ class OpencvMaa < Formula
   license "Apache-2.0"
   revision 1
 
-
-  resource "contrib" do
-    url "https://github.com/opencv/opencv_contrib/archive/refs/tags/4.11.0.tar.gz"
-    sha256 "2dfc5957201de2aa785064711125af6abb2e80a64e2dc246aca4119b19687041"
-
-    livecheck do
-      formula :parent
-    end
-  end
-
   livecheck do
     url :stable
     regex(/^v?(\d+(?:\.\d+)+)$/i)
@@ -43,6 +33,15 @@ class OpencvMaa < Formula
   end
 
   conflicts_with "opencv", { because: "this is a minimal build of OpenCV" }
+
+  resource "contrib" do
+    url "https://github.com/opencv/opencv_contrib/archive/refs/tags/4.11.0.tar.gz"
+    sha256 "2dfc5957201de2aa785064711125af6abb2e80a64e2dc246aca4119b19687041"
+
+    livecheck do
+      formula :parent
+    end
+  end
 
   def install
     resource("contrib").stage buildpath/"opencv_contrib"

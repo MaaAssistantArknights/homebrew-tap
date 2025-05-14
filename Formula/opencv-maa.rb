@@ -4,6 +4,17 @@ class OpencvMaa < Formula
   url "https://github.com/opencv/opencv/archive/refs/tags/4.11.0.tar.gz"
   sha256 "9a7c11f924eff5f8d8070e297b322ee68b9227e003fd600d4b8122198091665f"
   license "Apache-2.0"
+  revision 1
+
+
+  resource "contrib" do
+    url "https://github.com/opencv/opencv_contrib/archive/refs/tags/4.11.0.tar.gz"
+    sha256 "2dfc5957201de2aa785064711125af6abb2e80a64e2dc246aca4119b19687041"
+
+    livecheck do
+      formula :parent
+    end
+  end
 
   livecheck do
     url :stable
@@ -34,6 +45,8 @@ class OpencvMaa < Formula
   conflicts_with "opencv", { because: "this is a minimal build of OpenCV" }
 
   def install
+    resource("contrib").stage buildpath/"opencv_contrib"
+
     # Remove bundled libraries to make sure formula dependencies are used
     libdirs = %w[ffmpeg libjasper libjpeg libjpeg-turbo libpng libtiff libwebp openexr openjpeg protobuf tbb zlib]
     libdirs.each { |l| rm_r(buildpath/"3rdparty"/l) }
@@ -41,7 +54,7 @@ class OpencvMaa < Formula
     cmake_args = %W[
       -DCMAKE_CXX_STANDARD=17
 
-      -DBUILD_LIST=core,imgproc,imgcodecs,videoio
+      -DBUILD_LIST=core,imgproc,imgcodecs,videoio,features2d,xfeatures2d
 
       -DBUILD_ZLIB=OFF
 
@@ -67,6 +80,12 @@ class OpencvMaa < Formula
 
       -DWITH_PROTOBUF=OFF
       -DBUILD_opencv_python3=OFF
+
+      -DBUILD_opencv_features2d=ON
+      -DBUILD_opencv_xfeatures2d=ON
+
+      -DOPENCV_ENABLE_NONFREE=ON
+      -DOPENCV_EXTRA_MODULES_PATH=#{buildpath}/opencv_contrib/modules
     ]
 
     # HACK: avoid opencv install data

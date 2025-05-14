@@ -1,8 +1,8 @@
 class MaaCore < Formula
   desc "Maa Arknights assistant Library"
   homepage "https://github.com/MaaAssistantArknights/MaaAssistantArknights/"
-  url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.16.4.tar.gz"
-  sha256 "48e714bf4096f8900b3c9ee3da79f2fcd528c0500d035ae79f6d88f4c96e116e"
+  url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.16.5.tar.gz"
+  sha256 "f509dd9fb534840d56965591ee75a17d5b7497ab9baaf7f0df694d9540f1dfe3"
   license "AGPL-3.0-only"
 
   livecheck do
@@ -47,6 +47,8 @@ class MaaCore < Formula
 
   fails_with gcc: "11"
 
+  patch :DATA
+
   def install
     cmake_args = %W[
       -DBUILD_SHARED_LIBS=ON
@@ -74,3 +76,17 @@ class MaaCore < Formula
     (share/"maa").install "resource" if build.with? "resource"
   end
 end
+
+__END__
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 59846c7d5..e18c027c9 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -81,7 +81,7 @@ if (BUILD_TEST)
+     target_link_libraries(test MaaCore)
+ endif (BUILD_TEST)
+
+-find_package(OpenCV REQUIRED COMPONENTS core imgproc imgcodecs videoio)
++find_package(OpenCV REQUIRED COMPONENTS core imgproc imgcodecs videoio features2d xfeatures2d)
+ find_package(ZLIB REQUIRED)
+ find_package(cpr CONFIG REQUIRED)

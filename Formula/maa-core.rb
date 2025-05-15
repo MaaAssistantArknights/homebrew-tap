@@ -79,14 +79,15 @@ end
 
 __END__
 diff --git a/CMakeLists.txt b/CMakeLists.txt
- index 59846c7d5..29eaf3120 100644
+ index 59846c7d5..c2222214b 100644
  --- a/CMakeLists.txt
  +++ b/CMakeLists.txt
  @@ -81,7 +81,7 @@ if (BUILD_TEST)
       target_link_libraries(test MaaCore)
   endif (BUILD_TEST)
 
- -find_package(OpenCV REQUIRED COMPONENTS core imgproc imgcodecs videoio)
- +find_package(OpenCV REQUIRED COMPONENTS core imgproc imgcodecs videoio features2d)
+  -find_package(OpenCV REQUIRED COMPONENTS core imgproc imgcodecs videoio)
+  +find_package(OpenCV REQUIRED COMPONENTS core imgproc imgcodecs videoio features2d)
+  +find_package(OpenCV QUIET COMPONENTS xfeatures2d)
   find_package(ZLIB REQUIRED)
   find_package(cpr CONFIG REQUIRED)

@@ -12,11 +12,11 @@ class OpencvMaa < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/opencv-maa-4.11.0"
-    sha256 arm64_sequoia: "ecffa7c1a332f527b145865907cf44484e25f28029a02d8db1ac956106074e40"
-    sha256 arm64_sonoma:  "0d459739522199c030fc0436b44389de90ae11be1e0b7bd0bef00d46a51ba334"
-    sha256 ventura:       "1c252f0730840c9ff979be30aaa97d22e31d76f36df1de0254541bc8d1b326e7"
-    sha256 x86_64_linux:  "cbc3a1272fbd1498449d9c2f396e6e70369666170f5f5e5998ee3596333f4568"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/opencv-maa-4.11.0_1"
+    sha256 arm64_sequoia: "ea12ef8f357a7780b0cae5eb66f98a6e0d3d4fd7c3dd8693a844498b90540a16"
+    sha256 arm64_sonoma:  "f1309f0bcd6c3cc19f154c1f305a8e7facb640d472df0138fede7bcd5d433298"
+    sha256 ventura:       "15cd603ab5317dc49315c99e1f07dd219dfd530f0b7cf4c57643909433e9e1b8"
+    sha256 x86_64_linux:  "e6b129e0a5bd00c41954da3fe009f8e7e652ba5813d18136437ef9675209dccc"
   end
 
   depends_on "cmake" => :build

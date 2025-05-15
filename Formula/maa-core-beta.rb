@@ -1,8 +1,8 @@
 class MaaCoreBeta < Formula
   desc "Maa Arknights assistant Library (beta)"
   homepage "https://github.com/MaaAssistantArknights/MaaAssistantArknights/"
-  url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.16.4.tar.gz"
-  sha256 "48e714bf4096f8900b3c9ee3da79f2fcd528c0500d035ae79f6d88f4c96e116e"
+  url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.16.5.tar.gz"
+  sha256 "f509dd9fb534840d56965591ee75a17d5b7497ab9baaf7f0df694d9540f1dfe3"
   license "AGPL-3.0-only"
 
   livecheck do
@@ -11,11 +11,11 @@ class MaaCoreBeta < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-beta-5.16.4"
-    sha256 cellar: :any,                 arm64_sequoia: "29bbcb7b316b4f6bec0e04694e9036b88c851ec296ebb7c1378dd48956c68be8"
-    sha256 cellar: :any,                 arm64_sonoma:  "0466a31cab8917ea0bb0a7fb3ece1bf819cf01ecab61e27a1402558cbf84510e"
-    sha256 cellar: :any,                 ventura:       "5597810744d33879ac4ed8e29a9cac67bd3e513a1e73d6cb09b3061548dab561"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7465e49835e10f8425bc471643dd173ca76cf0ffb6ebc242815c753324749232"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-beta-5.16.5"
+    sha256 cellar: :any,                 arm64_sequoia: "620c25affb1252f751e417c2caa4be09ae4c8d0f730b6b45b93878d18b4bfdeb"
+    sha256 cellar: :any,                 arm64_sonoma:  "1e9ed3a8d06315ebe152d772044f73cd2fd50e10b354737e0570291e54b991ec"
+    sha256 cellar: :any,                 ventura:       "449813290334a2048a998eff4609752d9ccfb4c61d26f890079d6f35d6261e40"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "31f0c5f5f8f44a870f45752ca982166bc367023eb05d4bfa2badda63935ec223"
   end
 
   option "with-resource", "Install resource files" if OS.linux?
@@ -47,6 +47,8 @@ class MaaCoreBeta < Formula
 
   fails_with gcc: "11"
 
+  patch :DATA
+
   def install
     cmake_args = %W[
       -DBUILD_SHARED_LIBS=ON
@@ -74,3 +76,17 @@ class MaaCoreBeta < Formula
     (share/"maa").install "resource" if build.with? "resource"
   end
 end
+
+__END__
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 59846c7d5..e18c027c9 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -81,7 +81,7 @@ if (BUILD_TEST)
+     target_link_libraries(test MaaCore)
+ endif (BUILD_TEST)
+
+-find_package(OpenCV REQUIRED COMPONENTS core imgproc imgcodecs videoio)
++find_package(OpenCV REQUIRED COMPONENTS core imgproc imgcodecs videoio features2d xfeatures2d)
+ find_package(ZLIB REQUIRED)
+ find_package(cpr CONFIG REQUIRED)

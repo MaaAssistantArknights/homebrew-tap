@@ -1,8 +1,8 @@
 class MaaCoreBeta < Formula
   desc "Maa Arknights assistant Library (beta)"
   homepage "https://github.com/MaaAssistantArknights/MaaAssistantArknights/"
-  url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.18.0.tar.gz"
-  sha256 "c1b597a92878e45dfba528abe1fbbf7204b5edd5d1a10539f26c5c87b040c010"
+  url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.18.1.tar.gz"
+  sha256 "512a78373981db3b01cb730d7499bfd841f515c7f38d2b7cf5f42c556c3cc7a1"
   license "AGPL-3.0-only"
 
   livecheck do
@@ -11,11 +11,11 @@ class MaaCoreBeta < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-beta-5.18.0"
-    sha256 cellar: :any,                 arm64_sequoia: "1cb4b25353034adb6bbec56081155e6cd5728adaa834703752d81f1c8d88772f"
-    sha256 cellar: :any,                 arm64_sonoma:  "b186a67f33cb10fcf9aa7309ce6b47337af7031da816622fa4731a2c11c7b5d2"
-    sha256 cellar: :any,                 ventura:       "9925cff7751f43bd1bb6a2df02ff90cc50a00fc125bb41004a712dbf21deb8b5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9c25437f403ac073659e06dcb838beaa0c8c74dbc2ae40c04cffaa209a629502"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-beta-5.18.1"
+    sha256 cellar: :any,                 arm64_sequoia: "e0a5a08ae15af0d72e58afe624bc38b4a745b4c0cf84d5316e4688b94b837ee9"
+    sha256 cellar: :any,                 arm64_sonoma:  "a6287cb76ae74c542a6dca6067582177a49b4fef4162b827dcf0b3194455df2d"
+    sha256 cellar: :any,                 ventura:       "5359a3923369a3972b47efcfa507e77128fc78dc011e6425fd8a512ed9130e95"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9b8aa0f99353567791c4cbcedacf155d669ceb7155ee7b5391e875142f029efe"
   end
 
   option "with-resource", "Install resource files" if OS.linux?

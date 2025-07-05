@@ -11,11 +11,11 @@ class MaaCoreBeta < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-beta-5.18.2"
-    sha256 cellar: :any,                 arm64_sequoia: "42e91721ad883196e7a173dbe722b216833c8876849157766903a33a94182aa8"
-    sha256 cellar: :any,                 arm64_sonoma:  "1b2aa7baf15287085996610460af38858691810d608cb7b6886b0d6ab5fbf030"
-    sha256 cellar: :any,                 ventura:       "2a9e98edea229492c498e95440da9efb5e32c78626bac741540c7ef5fecee552"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fe9b766c5d18fc2c39ab6214a4c6dffb894683677dff0b8c49069b536b64dc6f"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-core-beta-5.18.3"
+    sha256 cellar: :any,                 arm64_sequoia: "bb23a6ab286624ac43c26a0d08f46b9645afa3c68586f0919ef0538e3159177a"
+    sha256 cellar: :any,                 arm64_sonoma:  "3884f95ce0e8a24e087d2036c0bc33092b46991ed7174faa99e5dd68ca636457"
+    sha256 cellar: :any,                 ventura:       "c455e6471f376afba4ab7753a1bcd46ac71f79b898ba9d8215b724dc3de844a9"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f7dc935bf59557a2d961787f15cea550dd890bb1077537263fd0e61242d328a4"
   end
 
   option "with-resource", "Install resource files" if OS.linux?

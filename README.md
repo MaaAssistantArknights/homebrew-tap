@@ -61,7 +61,6 @@ Due to the limitation of Homebrew and GitHub Action runner, we only provide preb
 
 ### Casks (only for macOS)
 
-- `maa-cli-bin`: `maa-cli` 的二进制版本 (Binary version of `maa-cli`)；
 - `maa-gui`: MAA macOS 图形界面 (MAA macOS GUI)；
 - `maa-gui-beta`: MAA macOS 图形界面的测试版本 (Beta version of MAA macOS GUI)。
 - `playcover-maa`: 用于 MAA 的 PlayCover 分支（MAA Fork of PlayCover）。

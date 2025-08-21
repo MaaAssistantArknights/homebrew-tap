@@ -13,6 +13,8 @@ cask "maa-gui-beta" do
     regex(/^v?(\d+\.\d+\.\d+(?:-(?:beta|rc)\.\d+)?)$/i)
   end
 
+  deprecate! date: "2025-08-21", because: "install maa@beta instead"
+
   auto_updates true
   conflicts_with cask: "MaaAssistantArknights/tap/maa-gui"
   depends_on macos: ">= :big_sur"

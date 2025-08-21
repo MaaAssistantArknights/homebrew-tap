@@ -61,8 +61,7 @@ Due to the limitation of Homebrew and GitHub Action runner, we only provide preb
 
 ### Casks (only for macOS)
 
-- `maa-gui`: MAA macOS 图形界面 (MAA macOS GUI)；
-- `maa-gui-beta`: MAA macOS 图形界面的测试版本 (Beta version of MAA macOS GUI)。
+- `maa@beta`: MAA macOS 图形界面的测试版本 (Beta version of MAA macOS GUI)，稳定版本请直接安装 `maa` (install `maa` for stable version)。
 - `playcover-maa`: 用于 MAA 的 PlayCover 分支（MAA Fork of PlayCover）。
 
 ## 开发者指引 (Developer guide)

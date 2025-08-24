@@ -3,6 +3,7 @@ name: Bump Formulae and Casks
 on:
   push:
     paths:
+      - "auto_bump/*.txt"
       - ".github/workflows/bump.yml"
   schedule:
     - cron: "20 8,20 * * *"

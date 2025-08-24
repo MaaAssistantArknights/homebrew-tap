@@ -1,6 +1,10 @@
 name: Bump Formulae and Casks
 
 on:
+  push:
+    paths:
+      - "auto_bump/*.txt"
+      - ".github/workflows/bump.yml"
   schedule:
     - cron: "20 8,20 * * *"
   workflow_dispatch:
@@ -14,8 +18,15 @@ permissions:
 
 jobs:
   bump:
-    name: Bump Homebrew Formulae and Casks
-    runs-on: macos-14
+    name: Auto Bump
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        type:
+          - formula
+          - cask
+
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
@@ -42,46 +53,20 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Bump Formulae
+      - name: Auto Bump
         env:
+          HOMEBREW_LIVECHECK_WATCHLIST: ${{ github.workspace }}/auto_bump/${{ matrix.type }}.txt
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.MAA_HOMEBREW_BUMP_PR }}
         run: |
-          formulae=$(brew livecheck --quiet --formula --json --tap="$GITHUB_REPOSITORY")
-          len=$(echo "$formulae" | jq length)
+          info=$(brew livecheck --newer-only --${{ matrix.type }} --json)
+          len=$(echo "$info" | jq length)
           for ((i=0; i < "$len"; i++)); do
-            formula=$(echo "$formulae" | jq -r ".[$i].formula")
-            version=$(echo "$formulae" | jq -r ".[$i].version.latest")
-            outdated=$(echo "$formulae" | jq -r ".[$i].version.outdated")
-            if [ "$outdated" = "true" ]; then
-              echo "Bumping \`$formula\` to \`$version\`"
-              brew bump-formula-pr "maaassistantarknights/tap/$formula" \
-                --no-audit \
-                --no-browse \
-                --version="$version" \
-                --message="Bump \`$formula\` to \`$version\`"
-            else
-              echo "\`$formula\` is up to date"
-            fi
-          done
-
-      - name: Bump Casks
-        env:
-          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.MAA_HOMEBREW_BUMP_PR }}
-        run: |
-          casks=$(brew livecheck --quiet --cask --json --tap="$GITHUB_REPOSITORY")
-          len=$(echo "$casks" | jq length)
-          for ((i=0; i < "$len"; i++)); do
-            cask=$(echo "$casks" | jq -r ".[$i].cask")
-            version=$(echo "$casks" | jq -r ".[$i].version.latest")
-            outdated=$(echo "$casks" | jq -r ".[$i].version.outdated")
-            if [ "$outdated" = "true" ]; then
-              echo "Bumping \`$cask\` to \`$version\`"
-              brew bump-cask-pr "maaassistantarknights/tap/$cask" \
-                --no-audit \
-                --no-browse \
-                --version="$version" \
-                --message="Bump \`$cask\` to \`$version\`"
-            else
-              echo "\`$cask\` is up to date"
-            fi
+            name=$(echo "$info" | jq -r ".[$i].${{ matrix.type }}")
+            version=$(echo "$info" | jq -r ".[$i].version.latest")
+            echo "Bumping \`$name\` to \`$version\`"
+            brew bump-${{ matrix.type }}-pr "maaassistantarknights/tap/$name" \
+              --no-audit \
+              --no-browse \
+              --version="$version" \
+              --message="Bump \`$name\` to \`$version\`"
           done

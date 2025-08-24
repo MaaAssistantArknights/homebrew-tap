@@ -54,17 +54,18 @@ jobs:
 
       - name: Auto Bump
         env:
+          HOMEBREW_LIVECHECK_WATCHLIST: ${{ github.workspace }}/auto_bump/${{ matrix.type }}.txt
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.MAA_HOMEBREW_BUMP_PR }}
         run: |
-          info=$(brew livecheck --newer-only --${{ matrix.type }} --json --tap="${{ github.repository }}")
+          info=$(brew livecheck --newer-only --${{ matrix.type }} --json)
           len=$(echo "$info" | jq length)
           for ((i=0; i < "$len"; i++)); do
-            formula=$(echo "$info" | jq -r ".[$i].${{ matrix.type }}")
+            name=$(echo "$info" | jq -r ".[$i].${{ matrix.type }}")
             version=$(echo "$info" | jq -r ".[$i].version.latest")
-            echo "Bumping \`$formula\` to \`$version\`"
-            brew bump-${{ matrix.type }}-pr "maaassistantarknights/tap/$formula" \
+            echo "Bumping \`$name\` to \`$version\`"
+            brew bump-${{ matrix.type }}-pr "maaassistantarknights/tap/$name" \
               --no-audit \
               --no-browse \
               --version="$version" \
-              --message="Bump \`$formula\` to \`$version\`"
+              --message="Bump \`$name\` to \`$version\`"
           done

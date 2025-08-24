@@ -3,7 +3,15 @@ on:
   push:
     branches:
       - main
+    paths:
+      - Formula/*
+      - Casks/*
+      # - .github/workflows/ci.yml
   pull_request:
+    paths:
+      - Formula/*
+      - Casks/*
+      # - .github/workflows/ci.yml
 
 jobs:
   build:

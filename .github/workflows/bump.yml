@@ -17,8 +17,15 @@ permissions:
 
 jobs:
   bump:
-    name: Bump Homebrew Formulae and Casks
-    runs-on: macos-14
+    name: Auto Bump
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        type:
+          - formula
+          - cask
+
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
@@ -72,11 +79,13 @@ jobs:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.MAA_HOMEBREW_BUMP_PR }}
         run: |
           casks=$(brew livecheck --quiet --cask --json --tap="$GITHUB_REPOSITORY")
+          echo "$casks"
           len=$(echo "$casks" | jq length)
           for ((i=0; i < "$len"; i++)); do
             cask=$(echo "$casks" | jq -r ".[$i].cask")
             version=$(echo "$casks" | jq -r ".[$i].version.latest")
             outdated=$(echo "$casks" | jq -r ".[$i].version.outdated")
+            echo "Checking $cask"
             if [ "$outdated" = "true" ]; then
               echo "Bumping \`$cask\` to \`$version\`"
               brew bump-cask-pr "maaassistantarknights/tap/$cask" \

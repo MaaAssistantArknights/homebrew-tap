@@ -1,6 +1,9 @@
 name: Bump Formulae and Casks
 
 on:
+  push:
+    paths:
+      - ".github/workflows/bump.yml"
   schedule:
     - cron: "20 8,20 * * *"
   workflow_dispatch:

@@ -28,25 +28,8 @@ jobs:
           - cask
 
     steps:
-      - name: Set up Homebrew
-        id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
-        with:
-          core: false
-          cask: false
-          test-bot: false
-
-      - name: Cache Homebrew Bundler RubyGems
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.set-up-homebrew.outputs.gems-path }}
-          key: ${{ runner.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
-          restore-keys: ${{ runner.os }}-rubygems-
-
-      - name: Install Homebrew Bundler RubyGems
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: brew install-bundler-gems
+      - name: Set up Tap
+        run: brew tap maaassistantarknights/tap
 
       - name: Configure Git User
         run: |
@@ -55,7 +38,7 @@ jobs:
 
       - name: Auto Bump
         env:
-          HOMEBREW_LIVECHECK_WATCHLIST: ${{ github.workspace }}/auto_bump/${{ matrix.type }}.txt
+          HOMEBREW_LIVECHECK_WATCHLIST: "/opt/homebrew/Library/Taps/maaassistantarknights/homebrew-tap/auto_bump/${{ matrix.type }}.txt"
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.MAA_HOMEBREW_BUMP_PR }}
         run: |
           info=$(brew livecheck --newer-only --${{ matrix.type }} --json)

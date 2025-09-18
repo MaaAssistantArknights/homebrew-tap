@@ -41,16 +41,16 @@ Due to the limitation of Homebrew and GitHub Action runner, we only provide preb
     </thead>
     <tbody>
         <tr>
+            <td>macOS 26 (Tahoe)</td>
+            <td>aarch64 (Apple Silicon)</td>
+        </tr>
+        <tr>
             <td>macOS 15 (Sequoia)</td>
             <td>aarch64 (Apple Silicon)</td>
         </tr>
         <tr>
             <td>macOS 14 (Sonoma)</td>
             <td>aarch64 (Apple Silicon)</td>
-        </tr>
-        <tr>
-            <td>macOS 13 (Ventura)</td>
-            <td>x86_64</td>
         </tr>
         <tr>
             <td>Linux</td>

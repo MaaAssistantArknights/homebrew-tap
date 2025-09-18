@@ -1,5 +1,2 @@
 maa-cli
 maa-cli-beta
-maa-core
-maa-core-beta
-opencv-maa

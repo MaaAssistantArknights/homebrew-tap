@@ -44,6 +44,7 @@ jobs:
         env:
           HOMEBREW_LIVECHECK_WATCHLIST: "/opt/homebrew/Library/Taps/maaassistantarknights/homebrew-tap/auto_bump/${{ matrix.type }}.txt"
         run: |
+          brew livecheck --newer-only --${{ matrix.type }} --json
           {
             echo -n "LIVECHECK_RESULT="
             brew livecheck --newer-only --${{ matrix.type }} --json | jq -c '.'

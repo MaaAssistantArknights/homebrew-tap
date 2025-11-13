@@ -28,6 +28,10 @@ jobs:
           - cask
 
     steps:
+      - name: Get brew config (if debug)
+        if: runner.debug == '1'
+        run: brew config
+
       - name: Set up Tap
         run: brew tap maaassistantarknights/tap
 
@@ -36,20 +40,39 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Auto Bump
+      - name: Livecheck
         env:
           HOMEBREW_LIVECHECK_WATCHLIST: "/opt/homebrew/Library/Taps/maaassistantarknights/homebrew-tap/auto_bump/${{ matrix.type }}.txt"
-          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.MAA_HOMEBREW_BUMP_PR }}
         run: |
-          info=$(brew livecheck --newer-only --${{ matrix.type }} --json)
-          len=$(echo "$info" | jq length)
-          for ((i=0; i < "$len"; i++)); do
-            name=$(echo "$info" | jq -r ".[$i].${{ matrix.type }}")
-            version=$(echo "$info" | jq -r ".[$i].version.latest")
-            echo "Bumping \`$name\` to \`$version\`"
-            brew bump-${{ matrix.type }}-pr "maaassistantarknights/tap/$name" \
-              --no-audit \
-              --no-browse \
-              --version="$version" \
-              --message="Bump \`$name\` to \`$version\`"
-          done
+          brew livecheck --newer-only --${{ matrix.type }} --json
+          {
+            echo -n "LIVECHECK_RESULT="
+            brew livecheck --newer-only --${{ matrix.type }} --json | jq -c '.'
+          } >> $GITHUB_ENV
+
+      - name: Auto Bump
+        uses: actions/github-script@v8
+        env:
+          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.MAA_HOMEBREW_BUMP_PR }}
+        with:
+          script: |
+            const info = JSON.parse(process.env.LIVECHECK_RESULT);
+            const type = `${{ matrix.type }}`;
+            for (let i = 0; i < info.length; i++) {
+              const name = info[i][type];
+              const version = info[i].version.latest;
+              core.info(`Bumping \`${name}\` to \`${version}\``);
+
+              try {
+                await exec.exec('brew', [
+                  `bump-${type}-pr`,
+                  `maaassistantarknights/tap/${name}`,
+                  '--no-audit',
+                  '--no-browse',
+                  `--version=${version}`,
+                  `--message=Bump \`${name}\` to \`${version}\``
+                ]);
+              } catch (error) {
+                core.setFailed(`Failed to bump ${name}: ${error.message}`);
+              }
+            }

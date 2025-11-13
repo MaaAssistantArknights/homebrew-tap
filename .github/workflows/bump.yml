@@ -28,6 +28,10 @@ jobs:
           - cask
 
     steps:
+      - name: Get brew config (if debug)
+        if: runner.debug == '1'
+        run: brew config
+
       - name: Set up Tap
         run: brew tap maaassistantarknights/tap
 
@@ -42,7 +46,7 @@ jobs:
         run: |
           {
             echo -n "LIVECHECK_RESULT="
-            brew livecheck --newer-only --${{ matrix.type }} --json
+            brew livecheck --newer-only --${{ matrix.type }} --json | jq -c '.'
           } >> $GITHUB_ENV
 
       - name: Auto Bump

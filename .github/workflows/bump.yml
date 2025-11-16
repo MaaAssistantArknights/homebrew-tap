@@ -48,7 +48,7 @@ jobs:
           {
             echo -n "LIVECHECK_RESULT="
             brew livecheck --newer-only --${{ matrix.type }} --json | jq -c '.'
-          } >> $GITHUB_ENV
+          } >> "$GITHUB_ENV"
 
       - name: Auto Bump
         uses: actions/github-script@v8

@@ -60,10 +60,6 @@ Due to the limitation of Homebrew and GitHub Action runner, we only provide preb
             <td>Linux</td>
             <td>x86_64</td>
         </tr>
-        <tr>
-            <td>Linux</td>
-            <td>aarch64</td>
-        </tr>
     </tbody>
 </table>
 

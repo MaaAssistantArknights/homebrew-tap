@@ -24,7 +24,7 @@ class MaaCli < Formula
 
   depends_on "rust" => :build
 
-  depends_on "libgit2" if build.with?("git2")
+  depends_on "libgit2" => :recommended
 
   uses_from_macos "zlib"
 

@@ -4,6 +4,7 @@ class MaaCliBeta < Formula
   url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.6.0-beta.3.tar.gz"
   sha256 "dcb2e304f8ab669bf42a8824edbcc04dafbb44aa9adb441e03bf01249dc754e3"
   license "AGPL-3.0-only"
+  revision 1
 
   livecheck do
     url :stable
@@ -23,9 +24,7 @@ class MaaCliBeta < Formula
 
   depends_on "rust" => :build
 
-  # openssl is always required on Linux
-  # while it's only required on macOS when building with git2
-  depends_on "openssl@3" if OS.linux? || build.with?("git2")
+  depends_on "libgit2" if build.with?("git2")
   uses_from_macos "zlib"
 
   conflicts_with "maa-cli", { because: "both provide maa" }
@@ -37,7 +36,7 @@ class MaaCliBeta < Formula
     ENV["MAA_VERSION"] = version.to_s
 
     features = []
-    features += ["git2", "git2/vendored-libgit2"] if build.with? "git2"
+    features += ["git2"] if build.with? "git2"
     features += ["core_installer"] if build.with? "core-installer"
 
     package_path = "crates/maa-cli"

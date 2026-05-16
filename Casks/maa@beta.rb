@@ -15,7 +15,7 @@ cask "maa@beta" do
 
   auto_updates true
   conflicts_with cask: "maa"
-  depends_on macos: ">= :big_sur"
+  depends_on macos: :big_sur
 
   app "MAA.app"
 end

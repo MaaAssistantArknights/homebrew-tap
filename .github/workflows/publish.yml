@@ -59,10 +59,12 @@ jobs:
         id: pr
         env:
           GH_TOKEN: ${{ github.token }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref || '' }}
+          PR_HEAD_REPO_CLONE_URL: ${{ github.event.pull_request.head.repo.clone_url || '' }}
         run: |
           if [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
-            head_ref='${{ github.event.pull_request.head.ref }}'
-            head_repo_clone_url='${{ github.event.pull_request.head.repo.clone_url }}'
+            head_ref="$PR_HEAD_REF"
+            head_repo_clone_url="$PR_HEAD_REPO_CLONE_URL"
           else
             pr_json="$(
               gh api \

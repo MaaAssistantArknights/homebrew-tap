@@ -3,32 +3,191 @@ on:
   pull_request_target:
     types:
       - labeled
-  workflow_dispatch:
-    inputs:
-      pull_request:
-        description: Pull request number
-        type: number
-        required: true
+  workflow_run:
+    workflows:
+      - Build, Test and Upload Bottles
+    types:
+      - completed
 concurrency:
-  group: publish-${{ github.event.pull_request.number || inputs.pull_request }}
+  group: publish-${{ github.event.pull_request.number || github.event.workflow_run.pull_requests[0].number || github.run_id }}
   cancel-in-progress: false
 defaults:
   run:
     shell: bash
 
+permissions:
+  contents: read
+
 jobs:
-  pr-pull:
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'Automerge')
+  check:
+    if: >
+      (github.event_name == 'pull_request_target' && github.event.label.name == 'Automerge') ||
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'pull_request')
+    runs-on: ubuntu-22.04
+    permissions:
+      actions: read
+      contents: read
+      issues: write
+      pull-requests: read
+    outputs:
+      publish: ${{ steps.check.outputs.publish }}
+      pr: ${{ steps.check.outputs.pr }}
+      head_ref: ${{ steps.check.outputs.head_ref }}
+      head_repo_clone_url: ${{ steps.check.outputs.head_repo_clone_url }}
+    steps:
+      - name: Evaluate Publish Readiness
+        id: check
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const defaultBranch = context.payload.repository.default_branch;
+            const ciWorkflowName = 'Build, Test and Upload Bottles';
+
+            async function resolvePullRequestNumber() {
+              if (context.eventName === 'pull_request_target') {
+                return context.payload.pull_request.number;
+              }
+
+              const run = context.payload.workflow_run;
+              let number = run.pull_requests?.[0]?.number;
+              if (number) {
+                return number;
+              }
+
+              const associated = await github.paginate(
+                github.rest.repos.listPullRequestsAssociatedWithCommit,
+                {
+                  owner,
+                  repo,
+                  commit_sha: run.head_sha,
+                  per_page: 100,
+                },
+              );
+              const open = associated.filter((pr) => pr.state === 'open');
+              if (open.length !== 1) {
+                core.notice(`Expected exactly one open PR for ${run.head_sha}; found ${open.length}.`);
+                return null;
+              }
+
+              return open[0].number;
+            }
+
+            async function findSuccessfulCiRun(pullNumber, headSha) {
+              const runs = await github.paginate(
+                github.rest.actions.listWorkflowRunsForRepo,
+                {
+                  owner,
+                  repo,
+                  event: 'pull_request',
+                  head_sha: headSha,
+                  per_page: 100,
+                },
+              );
+
+              return runs.find((run) =>
+                run.name === ciWorkflowName &&
+                run.head_sha === headSha &&
+                run.conclusion === 'success' &&
+                (run.pull_requests ?? []).some((pullRequest) => pullRequest.number === pullNumber),
+              );
+            }
+
+            const number = await resolvePullRequestNumber();
+            if (!number) {
+              core.setOutput('publish', 'false');
+              return;
+            }
+
+            const { data: pr } = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: number,
+            });
+
+            if (pr.state !== 'open') {
+              core.notice(`PR #${number} is ${pr.state}; skipping.`);
+              core.setOutput('publish', 'false');
+              return;
+            }
+
+            if (pr.draft) {
+              core.notice(`PR #${number} is draft; skipping.`);
+              core.setOutput('publish', 'false');
+              return;
+            }
+
+            if (pr.base.ref !== defaultBranch) {
+              core.notice(`PR #${number} targets ${pr.base.ref}, not ${defaultBranch}; skipping.`);
+              core.setOutput('publish', 'false');
+              return;
+            }
+
+            const ciRun = context.eventName === 'workflow_run'
+              ? context.payload.workflow_run
+              : await findSuccessfulCiRun(number, pr.head.sha);
+
+            if (!ciRun || ciRun.name !== ciWorkflowName || ciRun.conclusion !== 'success') {
+              core.notice(`PR #${number} does not have a successful ${ciWorkflowName} run yet; skipping.`);
+              core.setOutput('publish', 'false');
+              return;
+            }
+
+            const hasAutomergeLabel = pr.labels.some(({ name }) => name === 'Automerge');
+            if (!hasAutomergeLabel) {
+              const files = await github.paginate(github.rest.pulls.listFiles, {
+                owner,
+                repo,
+                pull_number: number,
+                per_page: 100,
+              });
+              const allowedFile = /^(Formula|Casks)\/[^/]+\.rb$/;
+              const unexpectedFiles = files
+                .map(({ filename }) => filename)
+                .filter((filename) => !allowedFile.test(filename));
+
+              const trustedAutobump =
+                pr.head.repo.full_name === `${owner}/${repo}` &&
+                pr.head.ref.startsWith('bump-') &&
+                unexpectedFiles.length === 0;
+
+              if (!trustedAutobump) {
+                core.notice(`PR #${number} is not labeled Automerge and is not a trusted autobump PR; skipping.`);
+                core.setOutput('publish', 'false');
+                return;
+              }
+
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number: number,
+                labels: ['Automerge'],
+              });
+              core.notice(`Added Automerge to trusted autobump PR #${number}.`);
+            }
+
+            core.setOutput('publish', 'true');
+            core.setOutput('pr', `${number}`);
+            core.setOutput('head_ref', pr.head.ref);
+            core.setOutput('head_repo_clone_url', pr.head.repo.clone_url);
+
+  publish:
+    needs:
+      - check
+    if: needs.check.outputs.publish == 'true'
     runs-on: ubuntu-22.04
     container:
       image: ghcr.io/homebrew/ubuntu22.04:master
     permissions:
-      actions: write
-      pull-requests: write
       contents: write
       packages: write
+      pull-requests: write
     env:
-      PR: ${{ github.event.pull_request.number || inputs.pull_request }}
+      PR: ${{ needs.check.outputs.pr }}
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
@@ -55,37 +214,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Load PR Metadata
-        id: pr
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_HEAD_REF: ${{ github.event.pull_request.head.ref || '' }}
-          PR_HEAD_REPO_CLONE_URL: ${{ github.event.pull_request.head.repo.clone_url || '' }}
-        run: |
-          if [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
-            head_ref="$PR_HEAD_REF"
-            head_repo_clone_url="$PR_HEAD_REPO_CLONE_URL"
-          else
-            pr_json="$(
-              gh api \
-                --header 'Accept: application/vnd.github+json' \
-                --header 'X-GitHub-Api-Version: 2022-11-28' \
-                "repos/$GITHUB_REPOSITORY/pulls/$PR"
-            )"
-
-            head_ref="$(jq --raw-output '.head.ref' <<< "$pr_json")"
-            head_repo_clone_url="$(jq --raw-output '.head.repo.clone_url' <<< "$pr_json")"
-          fi
-
-          if [[ -z "$head_ref" ]] || [[ -z "$head_repo_clone_url" ]]; then
-            echo 'Failed to load pull request metadata.'
-            exit 1
-          fi
-
-          {
-            echo "head_ref=$head_ref"
-            echo "head_repo_clone_url=$head_repo_clone_url"
-          } >> "$GITHUB_OUTPUT"
       - name: Checkout PR Branch
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
         env:
@@ -112,8 +240,8 @@ jobs:
         uses: Homebrew/actions/git-try-push@master
         with:
           token: ${{ github.token }}
-          branch: ${{ steps.pr.outputs.head_ref }}
-          remote: ${{ steps.pr.outputs.head_repo_clone_url }}
+          branch: ${{ needs.check.outputs.head_ref }}
+          remote: ${{ needs.check.outputs.head_repo_clone_url }}
           directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
 
       - name: Wait for Remote Branch to be Updated

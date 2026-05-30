@@ -29,7 +29,6 @@ jobs:
     permissions:
       actions: read
       contents: read
-      issues: write
       pull-requests: read
     outputs:
       publish: ${{ steps.check.outputs.publish }}
@@ -161,13 +160,7 @@ jobs:
                 return;
               }
 
-              await github.rest.issues.addLabels({
-                owner,
-                repo,
-                issue_number: number,
-                labels: ['Automerge'],
-              });
-              core.notice(`Added Automerge to trusted autobump PR #${number}.`);
+              core.notice(`Trusted autobump PR #${number} passed CI; continuing without requiring Automerge.`);
             }
 
             core.setOutput('publish', 'true');

@@ -60,15 +60,20 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          pr_json="$(
-            gh api \
-              --header 'Accept: application/vnd.github+json' \
-              --header 'X-GitHub-Api-Version: 2022-11-28' \
-              "repos/$GITHUB_REPOSITORY/pulls/$PR"
-          )"
+          if [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
+            head_ref='${{ github.event.pull_request.head.ref }}'
+            head_repo_clone_url='${{ github.event.pull_request.head.repo.clone_url }}'
+          else
+            pr_json="$(
+              gh api \
+                --header 'Accept: application/vnd.github+json' \
+                --header 'X-GitHub-Api-Version: 2022-11-28' \
+                "repos/$GITHUB_REPOSITORY/pulls/$PR"
+            )"
 
-          head_ref="$(jq --raw-output '.head.ref' <<< "$pr_json")"
-          head_repo_clone_url="$(jq --raw-output '.head.repo.clone_url' <<< "$pr_json")"
+            head_ref="$(jq --raw-output '.head.ref' <<< "$pr_json")"
+            head_repo_clone_url="$(jq --raw-output '.head.repo.clone_url' <<< "$pr_json")"
+          fi
 
           if [[ -z "$head_ref" ]] || [[ -z "$head_repo_clone_url" ]]; then
             echo 'Failed to load pull request metadata.'

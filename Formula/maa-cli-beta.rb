@@ -4,6 +4,8 @@ class MaaCliBeta < Formula
   url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.7.5.tar.gz"
   sha256 "3f288b98e783a4ff230982d5c235c179ccc97617b7da1fe61f6766412ea6badd"
   license "AGPL-3.0-only"
+  revision 1
+
 
   livecheck do
     url :stable

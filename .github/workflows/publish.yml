@@ -3,14 +3,22 @@ on:
   pull_request_target:
     types:
       - labeled
-
+  workflow_dispatch:
+    inputs:
+      pull_request:
+        description: Pull request number
+        type: number
+        required: true
+concurrency:
+  group: publish-${{ github.event.pull_request.number || inputs.pull_request }}
+  cancel-in-progress: false
 defaults:
   run:
     shell: bash
 
 jobs:
   pr-pull:
-    if: contains(github.event.pull_request.labels.*.name, 'Automerge')
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'Automerge')
     runs-on: ubuntu-22.04
     container:
       image: ghcr.io/homebrew/ubuntu22.04:master
@@ -19,6 +27,8 @@ jobs:
       pull-requests: write
       contents: write
       packages: write
+    env:
+      PR: ${{ github.event.pull_request.number || inputs.pull_request }}
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
@@ -45,18 +55,42 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+      - name: Load PR Metadata
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          pr_json="$(
+            gh api \
+              --header 'Accept: application/vnd.github+json' \
+              --header 'X-GitHub-Api-Version: 2022-11-28' \
+              "repos/$GITHUB_REPOSITORY/pulls/$PR"
+          )"
+
+          head_ref="$(jq --raw-output '.head.ref' <<< "$pr_json")"
+          head_repo_clone_url="$(jq --raw-output '.head.repo.clone_url' <<< "$pr_json")"
+
+          if [[ -z "$head_ref" ]] || [[ -z "$head_repo_clone_url" ]]; then
+            echo 'Failed to load pull request metadata.'
+            exit 1
+          fi
+
+          {
+            echo "head_ref=$head_ref"
+            echo "head_repo_clone_url=$head_repo_clone_url"
+          } >> "$GITHUB_OUTPUT"
       - name: Checkout PR Branch
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh pr checkout ${{ github.event.pull_request.number }}
+        run: gh pr checkout "$PR"
 
       - name: Pull and Publish Bottles
         env:
           HOMEBREW_GITHUB_API_TOKEN: ${{ github.token }}
           HOMEBREW_GITHUB_PACKAGES_TOKEN: ${{ github.token }}
           HOMEBREW_GITHUB_PACKAGES_USER: ${{ github.actor }}
-          PULL_REQUEST: ${{ github.event.pull_request.number }}
+          PULL_REQUEST: ${{ env.PR }}
         run: |
           brew pr-pull \
             --debug \
@@ -65,21 +99,21 @@ jobs:
             --artifact-pattern 'bottles_*' \
             --tap="$GITHUB_REPOSITORY" \
             --workflows ci.yml \
-            '${{ github.event.pull_request.number }}'
+            "$PR"
 
       - name: Push commits to PR branch
         uses: Homebrew/actions/git-try-push@master
         with:
           token: ${{ github.token }}
-          branch: ${{ github.event.pull_request.head.ref }}
-          remote: ${{ github.event.pull_request.head.repo.clone_url }}
+          branch: ${{ steps.pr.outputs.head_ref }}
+          remote: ${{ steps.pr.outputs.head_repo_clone_url }}
           directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
 
       - name: Wait for Remote Branch to be Updated
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
         run: |
           local_head=$(git rev-parse HEAD)
-          remote_ref='pull/${{ github.event.pull_request.number }}/head'
+          remote_ref="pull/${PR}/head"
 
           attempt=0
           max_attempts=10
@@ -107,14 +141,13 @@ jobs:
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          gh pr review '${{ github.event.pull_request.number }}' --approve
+        run: gh pr review "$PR" --approve
 
       - name: Enable Auto Merge
         working-directory: ${{ steps.set-up-homebrew.outputs.repository-path }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr merge '${{ github.event.pull_request.number }}' \
+          gh pr merge "$PR" \
             --merge \
             --delete-branch

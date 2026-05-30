@@ -10,6 +10,14 @@ class MaaCli < Formula
     regex(/^v?(\d+\.\d+\.\d+)$/i)
   end
 
+  bottle do
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-cli-0.7.5"
+    sha256 cellar: :any, arm64_tahoe:   "639d5e59f28610580d160d1a8751fa8761314914ebc873cfff43d8539b2a7627"
+    sha256 cellar: :any, arm64_sequoia: "471dcc7638f0cad42a43fd109d8e66ffafab8a1c0b0a27ce1f98cca23d2d7863"
+    sha256 cellar: :any, arm64_sonoma:  "2f045ea4f9414a83f0ca6783d16e2b07b62b7d58ba6eee4d395100ebc04a428c"
+    sha256 cellar: :any, x86_64_linux:  "1ac0364c638a66df78a53480b2e4db18d9ea996c8d9dfa9b4067575d6450a459"
+  end
+
   option "without-git2", "Don't build with libgit2 resource updater backend"
   option "without-core-installer", "Don't build with core installer"
 

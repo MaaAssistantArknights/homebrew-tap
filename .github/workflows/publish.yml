@@ -237,7 +237,7 @@ jobs:
             "$PR"
 
       - name: Push commits to PR branch
-        uses: Homebrew/actions/git-try-push@master
+        uses: Homebrew/actions/git-try-push@main
         with:
           token: ${{ github.token }}
           branch: ${{ needs.check.outputs.head_ref }}

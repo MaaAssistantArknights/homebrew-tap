@@ -6,7 +6,6 @@ class MaaCliBeta < Formula
   license "AGPL-3.0-only"
   revision 1
 
-
   livecheck do
     url :stable
     regex(/^v?(\d+\.\d+\.\d+(?:-(?:beta|rc)\.\d+)?)$/i)

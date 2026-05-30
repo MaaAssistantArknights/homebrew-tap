@@ -69,6 +69,7 @@ jobs:
                   `maaassistantarknights/tap/${name}`,
                   '--no-audit',
                   '--no-browse',
+                  '--no-fork',
                   `--version=${version}`,
                   `--message=Bump \`${name}\` to \`${version}\``
                 ]);

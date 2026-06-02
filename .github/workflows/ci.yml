@@ -30,9 +30,6 @@ jobs:
         id: set-up-homebrew
         uses: Homebrew/actions/setup-homebrew@main
 
-      - name: Trust Tap
-        run: brew trust maaassistantarknights/tap
-
       - name: Install Bubblewrap
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y bubblewrap

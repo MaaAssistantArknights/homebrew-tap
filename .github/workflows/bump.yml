@@ -35,9 +35,6 @@ jobs:
       - name: Set up Tap
         run: brew tap maaassistantarknights/tap
 
-      - name: Trust Tap
-        run: brew trust maaassistantarknights/tap
-
       - name: Configure Git User
         run: |
           git config --global user.name "github-actions[bot]"

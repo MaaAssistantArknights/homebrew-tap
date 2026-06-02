@@ -190,6 +190,9 @@ jobs:
           cask: false
           test-bot: false
 
+      - name: Trust Tap
+        run: brew trust maaassistantarknights/tap
+
       - name: Cache Homebrew Bundler RubyGems
         id: cache
         uses: actions/cache@v4

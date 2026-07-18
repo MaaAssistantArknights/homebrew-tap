@@ -42,13 +42,17 @@ jobs:
 
       - name: Livecheck
         env:
-          HOMEBREW_LIVECHECK_WATCHLIST: "/opt/homebrew/Library/Taps/maaassistantarknights/homebrew-tap/auto_bump/${{ matrix.type }}.txt"
+          BUMP_WATCHLIST: "/opt/homebrew/Library/Taps/maaassistantarknights/homebrew-tap/auto_bump/${{ matrix.type }}.txt"
         run: |
-          brew livecheck --newer-only --${{ matrix.type }} --json
-          {
-            echo -n "LIVECHECK_RESULT="
-            brew livecheck --newer-only --${{ matrix.type }} --json | jq -c '.'
-          } >> "$GITHUB_ENV"
+          packages=()
+          while IFS= read -r package; do
+            packages+=("maaassistantarknights/tap/${package}")
+          done < "$BUMP_WATCHLIST"
+
+          livecheck_result="$(brew livecheck --newer-only --${{ matrix.type }} --json "${packages[@]}")"
+          echo "$livecheck_result"
+          compact_result="$(jq -c '.' <<< "$livecheck_result")"
+          echo "LIVECHECK_RESULT=$compact_result" >> "$GITHUB_ENV"
 
       - name: Auto Bump
         uses: actions/github-script@v8

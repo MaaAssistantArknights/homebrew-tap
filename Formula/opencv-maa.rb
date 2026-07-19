@@ -91,10 +91,10 @@ class OpencvMaa < Formula
 
     if OS.linux?
       cmake_args += %W[
-        -DOpenBLAS_LIB=#{Formula["openblas"].opt_lib}/libopenblas.so
-        -DPNG_LIBRARY=#{Formula["libpng"].opt_lib}/libpng.so
-        -DJPEG_LIBRARY=#{Formula["jpeg-turbo"].opt_lib}/libjpeg.so
-        -DZLIB_LIBRARY=#{Formula["zlib"].opt_lib}/libz.so
+        -DOpenBLAS_LIB=#{formula_opt_lib("openblas")}/libopenblas.so
+        -DPNG_LIBRARY=#{formula_opt_lib("libpng")}/libpng.so
+        -DJPEG_LIBRARY=#{formula_opt_lib("jpeg-turbo")}/libjpeg.so
+        -DZLIB_LIBRARY=#{formula_opt_lib("zlib")}/libz.so
       ]
     end
 

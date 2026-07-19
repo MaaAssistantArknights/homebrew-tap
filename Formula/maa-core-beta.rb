@@ -61,10 +61,10 @@ class MaaCoreBeta < Formula
 
     if OS.mac? && MacOS.version <= :ventura
       # Force building with llvm clang
-      cmake_args << "-DCMAKE_C_COMPILER=#{Formula["llvm"].opt_bin}/clang"
-      cmake_args << "-DCMAKE_CXX_COMPILER=#{Formula["llvm"].opt_bin}/clang++"
+      cmake_args << "-DCMAKE_C_COMPILER=#{formula_opt_bin("llvm")}/clang"
+      cmake_args << "-DCMAKE_CXX_COMPILER=#{formula_opt_bin("llvm")}/clang++"
       # Force using llvm libc++
-      ENV.append "LDFLAGS", "-L#{Formula["llvm"].opt_prefix}/lib/c++"
+      ENV.append "LDFLAGS", "-L#{formula_opt_prefix("llvm")}/lib/c++"
     end
 
     system "cmake", "-S", ".", "-B", "build", *cmake_args, *std_cmake_args

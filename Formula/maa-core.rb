@@ -4,6 +4,7 @@ class MaaCore < Formula
   url "https://github.com/MaaAssistantArknights/MaaAssistantArknights/archive/refs/tags/v5.24.2.tar.gz"
   sha256 "df85fcb31e31a7e9daa01fa7621eef5928848668aedd4e38c608de8b69658105"
   license "AGPL-3.0-only"
+  revision 1
 
   livecheck do
     url :stable
@@ -37,10 +38,13 @@ class MaaCore < Formula
   end
 
   uses_from_macos "curl"
-  uses_from_macos "zlib"
 
   on_ventura :or_older do
     depends_on "llvm"
+  end
+
+  on_linux do
+    depends_on "zlib-ng-compat"
   end
 
   conflicts_with "maa-core-beta", { because: "both provide libMaaCore" }

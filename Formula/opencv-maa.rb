@@ -4,6 +4,7 @@ class OpencvMaa < Formula
   url "https://github.com/opencv/opencv/archive/refs/tags/4.12.0.tar.gz"
   sha256 "44c106d5bb47efec04e531fd93008b3fcd1d27138985c5baf4eafac0e1ec9e9d"
   license "Apache-2.0"
+  revision 1
 
   livecheck do
     url :stable
@@ -24,11 +25,10 @@ class OpencvMaa < Formula
   depends_on "jpeg-turbo"
   depends_on "libpng"
 
-  uses_from_macos "zlib"
-
   on_linux do
     depends_on "ffmpeg@6"
     depends_on "openblas"
+    depends_on "zlib-ng-compat"
   end
 
   conflicts_with "opencv", { because: "this is a minimal build of OpenCV" }
@@ -94,7 +94,7 @@ class OpencvMaa < Formula
         -DOpenBLAS_LIB=#{formula_opt_lib("openblas")}/libopenblas.so
         -DPNG_LIBRARY=#{formula_opt_lib("libpng")}/libpng.so
         -DJPEG_LIBRARY=#{formula_opt_lib("jpeg-turbo")}/libjpeg.so
-        -DZLIB_LIBRARY=#{formula_opt_lib("zlib")}/libz.so
+        -DZLIB_LIBRARY=#{formula_opt_lib("zlib-ng-compat")}/libz.so
       ]
     end
 

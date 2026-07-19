@@ -44,10 +44,25 @@ jobs:
         env:
           BUMP_WATCHLIST: "/opt/homebrew/Library/Taps/maaassistantarknights/homebrew-tap/auto_bump/${{ matrix.type }}.txt"
         run: |
+          if [[ ! -f "$BUMP_WATCHLIST" ]]; then
+            echo "::error::Bump watchlist not found: $BUMP_WATCHLIST"
+            exit 1
+          fi
+
           packages=()
-          while IFS= read -r package; do
+          while IFS= read -r package || [[ -n "$package" ]]; do
+            package="${package%%#*}"
+            package="${package#"${package%%[![:space:]]*}"}"
+            package="${package%"${package##*[![:space:]]}"}"
+            [[ -n "$package" ]] || continue
+
             packages+=("maaassistantarknights/tap/${package}")
           done < "$BUMP_WATCHLIST"
+
+          if (( ${#packages[@]} == 0 )); then
+            echo "::error::Bump watchlist contains no package entries: $BUMP_WATCHLIST"
+            exit 1
+          fi
 
           livecheck_result="$(brew livecheck --newer-only --${{ matrix.type }} --json "${packages[@]}")"
           echo "$livecheck_result"

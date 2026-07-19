@@ -77,13 +77,31 @@ jobs:
           script: |
             const info = JSON.parse(process.env.LIVECHECK_RESULT);
             const type = `${{ matrix.type }}`;
+            const dryRun = context.eventName === 'push';
             for (let i = 0; i < info.length; i++) {
               const name = info[i][type];
               const version = info[i].version.latest;
-              core.info(`Bumping \`${name}\` to \`${version}\``);
+              const branchVersion = type === 'cask' ? version.replace(/[,:]/g, '-') : version;
+              const branch = `bump-${name}-${branchVersion}`;
+
+              if (!dryRun) {
+                try {
+                  await github.rest.git.getRef({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    ref: `heads/${branch}`
+                  });
+                  core.info(`Skipping \`${name}\` because branch \`${branch}\` already exists`);
+                  continue;
+                } catch (error) {
+                  if (error.status !== 404) throw error;
+                }
+              }
+
+              core.info(`${dryRun ? 'Dry-running bump of' : 'Bumping'} \`${name}\` to \`${version}\``);
 
               try {
-                await exec.exec('brew', [
+                const args = [
                   `bump-${type}-pr`,
                   `maaassistantarknights/tap/${name}`,
                   '--no-audit',
@@ -91,7 +109,9 @@ jobs:
                   '--no-fork',
                   `--version=${version}`,
                   `--message=Bump \`${name}\` to \`${version}\``
-                ]);
+                ];
+                if (dryRun) args.push('--dry-run');
+                await exec.exec('brew', args);
               } catch (error) {
                 core.setFailed(`Failed to bump ${name}: ${error.message}`);
               }

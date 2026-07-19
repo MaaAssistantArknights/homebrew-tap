@@ -23,8 +23,6 @@ brew install <formula>
 
 - `maa-cli`: MAA 命令行工具 (MAA CLI tool)。
 - `maa-cli-beta`: MAA 命令行工具的测试版本 (Beta version for MAA CLI tool)。
-- `maa-core`: MAA 核心库 `libMaaCore.(so|dylib)` (MAA Core)。
-- `maa-core-beta`: MAA 核心库的测试版本（Beta version for MAA Core)。
 
 #### 预编译 bottle (Prebuilt bottle)
 

@@ -1,6 +1,6 @@
 cask "playcover-maa" do
-  version "3.1.0.maa.8"
-  sha256 "2e70f6cd32ed1f4879b9a7e6feda59148645b4a06ff3d260f084aab7558548da"
+  version "3.1.0.maa.9"
+  sha256 "ccccead86c49b5d700efcc12468bc3c221bd4bb0c5a43f7c17dec5bf80a67ee3"
 
   url "https://github.com/hguandl/PlayCover/releases/download/v#{version}/PlayCover-v#{version}.dmg"
   name "PlayCover.app"

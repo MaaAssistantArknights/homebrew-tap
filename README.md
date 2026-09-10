@@ -6,16 +6,28 @@ This is a Homebrew Tap for installing MaaAssistantArknights (MAA) related softwa
 
 ## 如何安装包 (How do I install these formulae and casks?)
 
-```bash
-brew install MaaAssistantArknights/tap/<formula>
-```
+推荐使用完整包名安装，这会仅信任所安装的包。例如安装 `maa-cli` 或 `maa@beta`：
 
-or
+Install and trust a specific package using its fully qualified name:
 
 ```bash
-brew tap MaaAssistantArknights/tap
-brew install <formula>
+brew install maaassistantarknights/tap/maa-cli
+brew install --cask maaassistantarknights/tap/maa@beta
 ```
+
+如果希望使用短名称，先添加 tap 并信任对应的包：
+
+To use a short name, tap the repository and trust the specific package first:
+
+```bash
+brew tap maaassistantarknights/tap
+brew trust --formula maaassistantarknights/tap/maa-cli
+brew install maa-cli
+```
+
+Cask 使用 `brew trust --cask`。详见 [Homebrew Tap Trust](https://docs.brew.sh/Tap-Trust)。
+
+For casks, use `brew trust --cask`. See [Homebrew Tap Trust](https://docs.brew.sh/Tap-Trust).
 
 ## 可用软件 (Available software)
 

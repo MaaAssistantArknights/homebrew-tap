@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: Evaluate Publish Readiness
         id: check
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9.0.0
         with:
           github-token: ${{ github.token }}
           script: |
@@ -184,15 +184,14 @@ jobs:
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@main
+        uses: Homebrew/actions/setup-homebrew@2026.09.07.1
         with:
           core: false
           cask: false
-          test-bot: false
 
       - name: Cache Homebrew Bundler RubyGems
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6.1.0
         with:
           path: ${{ steps.set-up-homebrew.outputs.gems-path }}
           key: ${{ runner.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
@@ -230,7 +229,7 @@ jobs:
             "$PR"
 
       - name: Push commits to PR branch
-        uses: Homebrew/actions/git-try-push@main
+        uses: Homebrew/actions/git-try-push@2026.09.07.1
         with:
           token: ${{ github.token }}
           branch: ${{ needs.check.outputs.head_ref }}

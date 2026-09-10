@@ -29,7 +29,7 @@ class MaaCliBeta < Formula
   depends_on "openssl@3" if OS.linux? || build.with?("git2")
   uses_from_macos "zlib"
 
-  conflicts_with "maa-cli", { because: "both provide maa" }
+  conflicts_with "maa-cli", because: "both provide maa"
 
   def install
     ENV["CARGO_PROFILE_RELEASE_CODEGEN_UNITS"] = "1"

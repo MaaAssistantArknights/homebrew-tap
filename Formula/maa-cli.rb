@@ -29,7 +29,7 @@ class MaaCli < Formula
 
   uses_from_macos "zlib"
 
-  conflicts_with "maa-cli-beta", { because: "both provide maa" }
+  conflicts_with "maa-cli-beta", because: "both provide maa"
 
   def install
     ENV["CARGO_PROFILE_RELEASE_CODEGEN_UNITS"] = "1"

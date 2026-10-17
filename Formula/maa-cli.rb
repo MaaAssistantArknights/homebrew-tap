@@ -1,8 +1,8 @@
 class MaaCli < Formula
   desc "Command-line tool for MAA (MaaAssistantArknights)"
   homepage "https://github.com/MaaAssistantArknights/maa-cli/"
-  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.7.5.tar.gz"
-  sha256 "3f288b98e783a4ff230982d5c235c179ccc97617b7da1fe61f6766412ea6badd"
+  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.7.6.tar.gz"
+  sha256 "2956d53732c8505de66c5ae1867dbbf493ec683efb0f0b61d78cc488e1867636"
   license "AGPL-3.0-only"
 
   livecheck do
@@ -25,7 +25,7 @@ class MaaCli < Formula
 
   # openssl is always required on Linux
   # while it's only required on macOS when building with git2
-  depends_on "openssl@3" if OS.linux? || build.with?("git2")
+  depends_on "openssl@4" if OS.linux? || build.with?("git2")
 
   uses_from_macos "zlib"
 
@@ -36,6 +36,7 @@ class MaaCli < Formula
     ENV["CARGO_PROFILE_RELEASE_LTO"] = "true"
     ENV["CARGO_PROFILE_RELEASE_STRIP"] = "true"
     ENV["MAA_VERSION"] = version.to_s
+    ENV["OPENSSL_DIR"] = formula_opt_prefix("openssl@4") if OS.linux? || build.with?("git2")
 
     features = []
     features += ["git2", "git2/vendored-libgit2"] if build.with? "git2"

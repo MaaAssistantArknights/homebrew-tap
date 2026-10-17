@@ -23,9 +23,11 @@ jobs:
         os:
           - ubuntu-24.04
           - ubuntu-24.04-arm
-          - macos-14
           - macos-15
           - macos-26
+          # macOS 27: only available via the xcode-27 image for now;
+          # switch to macos-27 once GitHub adds it (actions/runner-images#14519)
+          - xcode-27
     steps:
       - name: Set up Homebrew
         id: set-up-homebrew

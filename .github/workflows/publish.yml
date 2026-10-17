@@ -58,25 +58,31 @@ jobs:
                 return number;
               }
 
-              const associated = await github.paginate(
-                github.rest.repos.listPullRequestsAssociatedWithCommit,
-                {
-                  owner,
-                  repo,
-                  commit_sha: run.head_sha,
-                  per_page: 100,
-                },
-              );
               const open = associated.filter((pr) => pr.state === 'open');
-              if (open.length !== 1) {
-                core.notice(`Expected exactly one open PR for ${run.head_sha}; found ${open.length}.`);
+              if (open.length === 1) {
+                return open[0].number;
+              }
+
+              // Commit-PR association data is unreliable (empty for fork PRs and
+              // intermittently missing after force pushes); fall back to matching
+              // open PRs by head sha.
+              core.notice(`Commit association found ${open.length} open PRs for ${run.head_sha}; falling back to head-sha match.`);
+              const openPrs = await github.paginate(github.rest.pulls.list, {
+                owner,
+                repo,
+                state: 'open',
+                per_page: 100,
+              });
+              const matched = openPrs.filter((openPr) => openPr.head.sha === run.head_sha);
+              if (matched.length !== 1) {
+                core.notice(`Expected exactly one open PR for ${run.head_sha}; found ${matched.length}.`);
                 return null;
               }
 
-              return open[0].number;
+              return matched[0].number;
             }
 
-            async function findSuccessfulCiRun(pullNumber, headSha) {
+            async function findSuccessfulCiRun(headSha) {
               const runs = await github.paginate(
                 github.rest.actions.listWorkflowRunsForRepo,
                 {
@@ -88,11 +94,13 @@ jobs:
                 },
               );
 
+              // headSha is the PR's current head fetched above, so a matching
+              // run is bound to this PR; run.pull_requests is unreliable
+              // (empty for fork PRs and after force pushes), so don't filter on it.
               return runs.find((run) =>
                 run.name === ciWorkflowName &&
                 run.head_sha === headSha &&
-                run.conclusion === 'success' &&
-                (run.pull_requests ?? []).some((pullRequest) => pullRequest.number === pullNumber),
+                run.conclusion === 'success',
               );
             }
 
@@ -128,7 +136,7 @@ jobs:
 
             const ciRun = context.eventName === 'workflow_run'
               ? context.payload.workflow_run
-              : await findSuccessfulCiRun(number, pr.head.sha);
+              : await findSuccessfulCiRun(pr.head.sha);
 
             if (!ciRun || ciRun.name !== ciWorkflowName || ciRun.conclusion !== 'success') {
               core.notice(`PR #${number} does not have a successful ${ciWorkflowName} run yet; skipping.`);

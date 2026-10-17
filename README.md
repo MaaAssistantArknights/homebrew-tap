@@ -51,6 +51,10 @@ Due to the limitation of Homebrew and GitHub Action runner, we only provide preb
     </thead>
     <tbody>
         <tr>
+            <td>macOS 27 (Golden Gate)</td>
+            <td>aarch64 (Apple Silicon)</td>
+        </tr>
+        <tr>
             <td>macOS 26 (Tahoe)</td>
             <td>aarch64 (Apple Silicon)</td>
         </tr>
@@ -59,12 +63,12 @@ Due to the limitation of Homebrew and GitHub Action runner, we only provide preb
             <td>aarch64 (Apple Silicon)</td>
         </tr>
         <tr>
-            <td>macOS 14 (Sonoma)</td>
-            <td>aarch64 (Apple Silicon)</td>
+            <td>Linux</td>
+            <td>x86_64</td>
         </tr>
         <tr>
             <td>Linux</td>
-            <td>x86_64</td>
+            <td>aarch64 (ARM64)</td>
         </tr>
     </tbody>
 </table>

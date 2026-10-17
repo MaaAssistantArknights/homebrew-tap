@@ -1,10 +1,9 @@
 class MaaCliBeta < Formula
   desc "Command-line tool for MAA (MaaAssistantArknights)"
   homepage "https://github.com/MaaAssistantArknights/maa-cli/"
-  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.7.5.tar.gz"
-  sha256 "3f288b98e783a4ff230982d5c235c179ccc97617b7da1fe61f6766412ea6badd"
+  url "https://github.com/MaaAssistantArknights/maa-cli/archive/refs/tags/v0.7.6.tar.gz"
+  sha256 "2956d53732c8505de66c5ae1867dbbf493ec683efb0f0b61d78cc488e1867636"
   license "AGPL-3.0-only"
-  revision 1
 
   livecheck do
     url :stable
@@ -12,11 +11,12 @@ class MaaCliBeta < Formula
   end
 
   bottle do
-    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-cli-beta-0.7.5_1"
-    sha256 cellar: :any, arm64_tahoe:   "177aa7d2ab27fda105623d87b380f8c7188e61e2aae925093e06b6b5bd173131"
-    sha256 cellar: :any, arm64_sequoia: "96adced9034ffc01b8046d13a71b424c373bafd02d204ec373024869867acc32"
-    sha256 cellar: :any, arm64_sonoma:  "18653506be8e2e46e480af4b65a72777bd12913d0dbbc0fdfe6fb703ad96c917"
-    sha256 cellar: :any, x86_64_linux:  "f74feb2d3d86b63ccff91f779058c551ef69a4947e86a81fbef4d1a5f3daeda4"
+    root_url "https://github.com/MaaAssistantArknights/homebrew-tap/releases/download/maa-cli-beta-0.7.6"
+    sha256 cellar: :any, arm64_golden_gate: "55610ceb536a51aa6cc5b55910858b735a0014e72498e70990201ae1ed67b294"
+    sha256 cellar: :any, arm64_tahoe:       "124aac1ce1c7c6161817bf6c994e388721d98929af0ab0e013e670f675a4d6cf"
+    sha256 cellar: :any, arm64_sequoia:     "688b25fb2d0c0e3798102c5a79bd861a82d89130bed0284c53b178275e3325cb"
+    sha256 cellar: :any, arm64_linux:       "24306d3a0423b2dcb9949c89d5ff8f6c4efb3c1bcb02f9fe1b933484aaacdce2"
+    sha256 cellar: :any, x86_64_linux:      "9fe923d2a97b76880a6fd0df2083293b1cb8fbfcb74e969ac232d3a9b530d7ce"
   end
 
   option "without-git2", "Don't build with libgit2 resource updater backend"
@@ -26,7 +26,7 @@ class MaaCliBeta < Formula
 
   # openssl is always required on Linux
   # while it's only required on macOS when building with git2
-  depends_on "openssl@3" if OS.linux? || build.with?("git2")
+  depends_on "openssl@4" if OS.linux? || build.with?("git2")
   uses_from_macos "zlib"
 
   conflicts_with "maa-cli", because: "both provide maa"
@@ -36,6 +36,7 @@ class MaaCliBeta < Formula
     ENV["CARGO_PROFILE_RELEASE_LTO"] = "true"
     ENV["CARGO_PROFILE_RELEASE_STRIP"] = "true"
     ENV["MAA_VERSION"] = version.to_s
+    ENV["OPENSSL_DIR"] = formula_opt_prefix("openssl@4") if OS.linux? || build.with?("git2")
 
     features = []
     features += ["git2", "git2/vendored-libgit2"] if build.with? "git2"
